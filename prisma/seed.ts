@@ -1,12 +1,40 @@
 import { prisma } from "../src/lib/prisma";
 import { ExerciseType, Level, Prisma } from "@prisma/client";
 
-const courses = [
+type SeedExercise = {
+  id: string;
+  type: ExerciseType;
+  question: string;
+  options: string[] | null;
+  correctAnswer: string;
+  hint: string;
+  xpReward: number;
+};
+
+type SeedLesson = {
+  id: string;
+  title: string;
+  language: string;
+  theory: string;
+  order: number;
+  exercises: SeedExercise[];
+};
+
+type SeedCourse = {
+  id: string;
+  title: string;
+  level: Level;
+  description: string;
+  order: number;
+  lessons: SeedLesson[];
+};
+
+const courses: SeedCourse[] = [
   {
     id: "course-beginner-python",
     title: "Beginner Python",
     level: Level.BEGINNER,
-    description: "Erste Befehle, Variablen und kleine Rechnungen mit Python.",
+    description: "Erste Befehle, Variablen, Rechnungen, Entscheidungen und Debugging mit Python.",
     order: 1,
     lessons: [
       {
@@ -14,7 +42,7 @@ const courses = [
         title: "Hallo Welt in Python",
         language: "python",
         theory:
-          'Mit print() kann der Computer etwas sagen. Text steht in Anfuehrungszeichen, zum Beispiel print("Hallo!").',
+          "Programmieren beginnt mit einem sichtbaren Ergebnis. Mit print() kann Python etwas im Terminal sagen. Text steht in Anfuehrungszeichen. Kinder sollen zuerst sehen: Ich schreibe eine Zeile, der Computer antwortet sofort.",
         order: 1,
         exercises: [
           {
@@ -36,9 +64,18 @@ const courses = [
             xpReward: 10,
           },
           {
+            id: "exercise-python-hallo-mc-3",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Warum stehen Worte oft in Anfuehrungszeichen?",
+            options: ["Damit Python sie als Text erkennt", "Damit sie schneller laufen", "Damit sie unsichtbar sind", "Damit Zahlen entstehen"],
+            correctAnswer: "Damit Python sie als Text erkennt",
+            hint: "Ohne Anfuehrungszeichen denkt Python, dass ein Name oder Befehl gemeint ist.",
+            xpReward: 10,
+          },
+          {
             id: "exercise-python-hallo-gap-1",
             type: ExerciseType.CODE_GAP,
-            question: "Fuellen die Luecke, damit Python dein Wort sagt.",
+            question: "Fuelle die Luecke, damit Python dein Wort sagt.",
             options: null,
             correctAnswer: "Hallo",
             hint: 'Schreibe ein Wort zwischen die Anfuehrungszeichen: print("Hallo").',
@@ -51,7 +88,7 @@ const courses = [
         title: "Variablen sind Boxen",
         language: "python",
         theory:
-          'Eine Variable ist wie eine beschriftete Box. In name = "Mia" liegt der Text Mia in der Box name.',
+          'Eine Variable ist wie eine beschriftete Box. In name = "Mia" liegt der Text Mia in der Box name. Danach kann Python diese Box immer wieder benutzen. So entsteht aus einzelnen Befehlen ein kleines Programm mit Gedachtnis.',
         order: 2,
         exercises: [
           {
@@ -73,6 +110,15 @@ const courses = [
             xpReward: 10,
           },
           {
+            id: "exercise-python-variablen-mc-3",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Welche Vorstellung passt gut zu einer Variable?",
+            options: ["Eine Box mit Etikett", "Ein geschlossener Browser", "Ein Bild ohne Namen", "Ein fertiges Spiel"],
+            correctAnswer: "Eine Box mit Etikett",
+            hint: "Der Variablenname ist das Etikett, der Wert ist der Inhalt.",
+            xpReward: 10,
+          },
+          {
             id: "exercise-python-variablen-gap-1",
             type: ExerciseType.CODE_GAP,
             question: "Setze einen Namen in die Variable ein.",
@@ -88,7 +134,7 @@ const courses = [
         title: "Rechnen mit Python",
         language: "python",
         theory:
-          "Python kann Zahlen schnell zusammenrechnen. Mit print(alter + 1) zeigt der Computer das Ergebnis.",
+          "Python kann Zahlen wie ein Taschenrechner verwenden. Der wichtige Lernschritt ist: Zahlen bleiben Zahlen, Text bleibt Text. Mit Variablen wie punkte = 10 kann ein Programm Ergebnisse merken und weiterrechnen.",
         order: 3,
         exercises: [
           {
@@ -110,6 +156,15 @@ const courses = [
             xpReward: 10,
           },
           {
+            id: "exercise-python-rechnen-mc-3",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Was zeigt print(4 * 2)?",
+            options: ["8", "42", "4 * 2", "6"],
+            correctAnswer: "8",
+            hint: "Der Stern ist in Python das Zeichen fuer Malnehmen.",
+            xpReward: 10,
+          },
+          {
             id: "exercise-python-rechnen-free-1",
             type: ExerciseType.FREE_CODE,
             question: "Schreibe Code, der dein Alter im naechsten Jahr ausgibt.",
@@ -120,13 +175,105 @@ const courses = [
           },
         ],
       },
+      {
+        id: "lesson-python-if",
+        title: "Entscheidungen mit if",
+        language: "python",
+        theory:
+          "Programme werden spannend, wenn sie entscheiden koennen. Mit if fragt Python: Stimmt diese Bedingung? Wenn ja, laeuft der eingerueckte Code darunter. Wenn nein, kann else eine andere Antwort geben. So entsteht eine einfache Wenn-dann-Regel.",
+        order: 4,
+        exercises: [
+          {
+            id: "exercise-python-if-mc-1",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Welches Wort startet eine Entscheidung in Python?",
+            options: ["if", "maybe", "check", "when"],
+            correctAnswer: "if",
+            hint: "if bedeutet: wenn etwas stimmt, dann fuehre den Code aus.",
+            xpReward: 10,
+          },
+          {
+            id: "exercise-python-if-mc-2",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Was macht else?",
+            options: ["Es laeuft, wenn die if-Bedingung nicht stimmt", "Es beendet immer Python", "Es macht Text blau", "Es speichert eine Liste"],
+            correctAnswer: "Es laeuft, wenn die if-Bedingung nicht stimmt",
+            hint: "else ist der andere Weg.",
+            xpReward: 10,
+          },
+          {
+            id: "exercise-python-if-mc-3",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Warum ist Einrueckung bei if wichtig?",
+            options: ["Sie zeigt, welcher Code zur Entscheidung gehoert", "Sie macht den Code geheim", "Sie ist nur Schmuck", "Sie ersetzt Anfuehrungszeichen"],
+            correctAnswer: "Sie zeigt, welcher Code zur Entscheidung gehoert",
+            hint: "Python liest Einrueckungen als Struktur.",
+            xpReward: 10,
+          },
+          {
+            id: "exercise-python-if-gap-1",
+            type: ExerciseType.CODE_GAP,
+            question: "Fuelle den Namen ein, damit die besondere Begruessung erscheint.",
+            options: null,
+            correctAnswer: "Hallo Max",
+            hint: 'Setze Max in die Variable: name = "Max".',
+            xpReward: 15,
+          },
+        ],
+      },
+      {
+        id: "lesson-python-fehler-finden",
+        title: "Fehler finden",
+        language: "python",
+        theory:
+          "Fehler sind Hinweise, keine Niederlagen. Gute Programmiererinnen und Programmierer lesen genau: Fehlt ein Anfuehrungszeichen? Ist ein Name anders geschrieben? Der Kurs arbeitet fehlerfreundlich: ausprobieren, Ausgabe anschauen, kleine Aenderung machen.",
+        order: 5,
+        exercises: [
+          {
+            id: "exercise-python-fehler-mc-1",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: 'Was ist an print("Hallo) falsch?',
+            options: ["Ein Anfuehrungszeichen fehlt", "print darf nicht benutzt werden", "Hallo ist zu kurz", "Python kann keinen Text"],
+            correctAnswer: "Ein Anfuehrungszeichen fehlt",
+            hint: "Text braucht vorne und hinten ein Anfuehrungszeichen.",
+            xpReward: 10,
+          },
+          {
+            id: "exercise-python-fehler-mc-2",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Was hilft beim Debuggen?",
+            options: ["Eine kleine Stelle nach der anderen pruefen", "Alles auf einmal loeschen", "Nie die Ausgabe lesen", "Nur raten"],
+            correctAnswer: "Eine kleine Stelle nach der anderen pruefen",
+            hint: "Kleine Tests machen Fehler leichter sichtbar.",
+            xpReward: 10,
+          },
+          {
+            id: "exercise-python-fehler-mc-3",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Was bedeutet eine Fehlermeldung am besten?",
+            options: ["Python gibt einen Hinweis", "Das Projekt ist kaputt", "Man darf nicht weiterlernen", "Der Computer ist aus"],
+            correctAnswer: "Python gibt einen Hinweis",
+            hint: "Die Meldung zeigt oft, wo du anfangen kannst zu suchen.",
+            xpReward: 10,
+          },
+          {
+            id: "exercise-python-fehler-gap-1",
+            type: ExerciseType.CODE_GAP,
+            question: "Repariere den Text, damit Python Fertig ausgibt.",
+            options: null,
+            correctAnswer: "Fertig",
+            hint: "In die Luecke gehoert das Wort Fertig zwischen Anfuehrungszeichen.",
+            xpReward: 15,
+          },
+        ],
+      },
     ],
   },
   {
     id: "course-beginner-html",
     title: "Beginner HTML",
     level: Level.BEGINNER,
-    description: "Baue deine erste Webseite mit Ueberschriften, Texten und Listen.",
+    description: "Baue deine erste Webseite mit Ueberschriften, Texten, Links und Listen.",
     order: 2,
     lessons: [
       {
@@ -134,7 +281,7 @@ const courses = [
         title: "HTML-Bausteine",
         language: "html",
         theory:
-          "<h1> ist eine grosse Ueberschrift. <p> ist ein Textblock. Jedes Tag wird wieder geschlossen.",
+          "HTML beschreibt, welche Teile eine Webseite hat. <h1> ist eine grosse Ueberschrift, <p> ist ein Textblock. Die meisten Tags haben einen Anfang und ein Ende. Dadurch erkennt der Browser die Struktur.",
         order: 1,
         exercises: [
           {
@@ -156,6 +303,15 @@ const courses = [
             xpReward: 10,
           },
           {
+            id: "exercise-html-bausteine-mc-3",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Warum werden viele HTML-Tags geschlossen?",
+            options: ["Damit der Browser weiss, wo ein Teil endet", "Damit Python schneller laeuft", "Damit die Seite offline ist", "Damit der Text verschwindet"],
+            correctAnswer: "Damit der Browser weiss, wo ein Teil endet",
+            hint: "Ein Start-Tag und ein Ende-Tag bilden zusammen einen Baustein.",
+            xpReward: 10,
+          },
+          {
             id: "exercise-html-bausteine-gap-1",
             type: ExerciseType.CODE_GAP,
             question: "Ergaenze die Ueberschrift deiner Webseite.",
@@ -171,7 +327,7 @@ const courses = [
         title: "Text und Links",
         language: "html",
         theory:
-          "Mit HTML kannst du Text strukturieren und Links setzen. Ein Link benutzt das a-Tag mit href.",
+          "Eine Webseite ist mehr als eine Ueberschrift. Absaetze erklaeren deine Idee, Links verbinden deine Seite mit anderen Orten. Ein Link benutzt das a-Tag und die Adresse steht im href-Attribut.",
         order: 2,
         exercises: [
           {
@@ -193,6 +349,15 @@ const courses = [
             xpReward: 10,
           },
           {
+            id: "exercise-html-links-mc-3",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Was ist guter Linktext?",
+            options: ["Ein kurzer Text, der das Ziel beschreibt", "Nur leere Zeichen", "Immer das Wort Ding", "Ein Python-Befehl"],
+            correctAnswer: "Ein kurzer Text, der das Ziel beschreibt",
+            hint: "Kinder und Browser verstehen Links besser, wenn der Text klar ist.",
+            xpReward: 10,
+          },
+          {
             id: "exercise-html-links-free-1",
             type: ExerciseType.FREE_CODE,
             question: "Schreibe einen Absatz ueber dein Lieblingstier.",
@@ -208,7 +373,7 @@ const courses = [
         title: "Listen bauen",
         language: "html",
         theory:
-          "Eine Liste sammelt mehrere Dinge. <ul> ist die Liste, jedes <li> ist ein einzelner Punkt.",
+          "Listen helfen, Dinge geordnet zu sammeln. <ul> ist eine ungeordnete Liste, jedes <li> ist ein einzelner Punkt. So kann eine Webseite Lieblingsspiele, Zutaten oder Lernziele sauber anzeigen.",
         order: 3,
         exercises: [
           {
@@ -230,6 +395,15 @@ const courses = [
             xpReward: 10,
           },
           {
+            id: "exercise-html-listen-mc-3",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Wofuer eignet sich eine Liste?",
+            options: ["Mehrere Dinge untereinander anzeigen", "Python-Code ausfuehren", "Einen Server starten", "Den Bildschirm ausschalten"],
+            correctAnswer: "Mehrere Dinge untereinander anzeigen",
+            hint: "Listen ordnen mehrere kurze Eintraege.",
+            xpReward: 10,
+          },
+          {
             id: "exercise-html-listen-gap-1",
             type: ExerciseType.CODE_GAP,
             question: "Ergaenze einen Listenpunkt fuer deine Webseite.",
@@ -237,6 +411,392 @@ const courses = [
             correctAnswer: "<li>",
             hint: "Ein Listenpunkt startet mit <li>.",
             xpReward: 15,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "course-intermediate-core",
+    title: "Intermediate Programmierwerkstatt",
+    level: Level.INTERMEDIATE,
+    description: "Schleifen, Funktionen, Listen, CSS und erste JavaScript-Interaktionen.",
+    order: 1,
+    lessons: [
+      {
+        id: "lesson-intermediate-schleifen",
+        title: "Schleifen wiederholen Arbeit",
+        language: "python",
+        theory:
+          "Schleifen sind fuer wiederholte Aufgaben da. Statt denselben Befehl fuenfmal zu schreiben, beschreibt eine for-Schleife das Muster. Das passt zum Spiralcurriculum: bekannte print-Befehle werden wieder aufgegriffen und mit Wiederholung erweitert.",
+        order: 1,
+        exercises: [
+          {
+            id: "exercise-intermediate-schleifen-mc-1",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Wofuer ist eine Schleife gut?",
+            options: ["Befehle wiederholen", "Text unsichtbar machen", "Eine Webseite loeschen", "Variablen verbieten"],
+            correctAnswer: "Befehle wiederholen",
+            hint: "Eine Schleife spart Wiederholarbeit.",
+            xpReward: 15,
+          },
+          {
+            id: "exercise-intermediate-schleifen-mc-2",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Wie oft laeuft for i in range(3)?",
+            options: ["3-mal", "2-mal", "4-mal", "Unendlich oft"],
+            correctAnswer: "3-mal",
+            hint: "range(3) gibt drei Schritte: 0, 1 und 2.",
+            xpReward: 15,
+          },
+          {
+            id: "exercise-intermediate-schleifen-gap-1",
+            type: ExerciseType.CODE_GAP,
+            question: "Lass die Rakete viermal starten.",
+            options: null,
+            correctAnswer: "Rakete startet! Rakete startet! Rakete startet! Rakete startet!",
+            hint: "Setze in range() die Anzahl der Wiederholungen ein.",
+            xpReward: 20,
+          },
+          {
+            id: "exercise-intermediate-schleifen-free-1",
+            type: ExerciseType.FREE_CODE,
+            question: "Schreibe eine Schleife, die dreimal Stern ausgibt.",
+            options: null,
+            correctAnswer: "Stern Stern Stern",
+            hint: 'Nutze for i in range(3): und darunter eingerueckt print("Stern").',
+            xpReward: 25,
+          },
+        ],
+      },
+      {
+        id: "lesson-intermediate-funktionen",
+        title: "Funktionen sind Zauberkisten",
+        language: "python",
+        theory:
+          "Eine Funktion bekommt einen Namen und kann spaeter wieder aufgerufen werden. Das Kind lernt: Ich packe mehrere Befehle in eine kleine Kiste. Parameter sind Platzhalter, damit dieselbe Funktion mit verschiedenen Namen oder Zahlen arbeiten kann.",
+        order: 2,
+        exercises: [
+          {
+            id: "exercise-intermediate-funktionen-mc-1",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Welches Wort startet eine Funktion in Python?",
+            options: ["def", "fun", "make", "box"],
+            correctAnswer: "def",
+            hint: "def kuerzt define ab: Wir definieren eine Funktion.",
+            xpReward: 15,
+          },
+          {
+            id: "exercise-intermediate-funktionen-mc-2",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Was ist ein Parameter?",
+            options: ["Ein Platzhalter fuer einen Wert", "Ein Fehler", "Ein HTML-Tag", "Ein Bild"],
+            correctAnswer: "Ein Platzhalter fuer einen Wert",
+            hint: "Der Parameter steht in den Klammern der Funktion.",
+            xpReward: 15,
+          },
+          {
+            id: "exercise-intermediate-funktionen-gap-1",
+            type: ExerciseType.CODE_GAP,
+            question: "Rufe die Funktion mit Byte auf.",
+            options: null,
+            correctAnswer: "Hallo Byte",
+            hint: 'Setze den Namen Byte als Text in die Klammern: begruessen("Byte").',
+            xpReward: 20,
+          },
+          {
+            id: "exercise-intermediate-funktionen-free-1",
+            type: ExerciseType.FREE_CODE,
+            question: "Schreibe eine Funktion, die 6 ausgibt.",
+            options: null,
+            correctAnswer: "6",
+            hint: "Eine Funktion kann rechnen und mit print() das Ergebnis zeigen.",
+            xpReward: 25,
+          },
+        ],
+      },
+      {
+        id: "lesson-intermediate-listen",
+        title: "Listen speichern viele Dinge",
+        language: "python",
+        theory:
+          "Listen sind Reihen von Werten. Sie passen zu echten Kinderwelten: Farben, Tiere, Level, Punkte. Mit einem Index holt Python einen Eintrag heraus. Wichtig: Der erste Platz hat die Nummer 0.",
+        order: 3,
+        exercises: [
+          {
+            id: "exercise-intermediate-listen-mc-1",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Welche Schreibweise ist eine Python-Liste?",
+            options: ['["rot", "blau"]', '{"rot", "blau"}', "<rot, blau>", 'list = "rot"'],
+            correctAnswer: '["rot", "blau"]',
+            hint: "Listen benutzen eckige Klammern.",
+            xpReward: 15,
+          },
+          {
+            id: "exercise-intermediate-listen-mc-2",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Welcher Index holt den ersten Eintrag?",
+            options: ["0", "1", "first", "10"],
+            correctAnswer: "0",
+            hint: "Python zaehlt Listenplaetze ab 0.",
+            xpReward: 15,
+          },
+          {
+            id: "exercise-intermediate-listen-gap-1",
+            type: ExerciseType.CODE_GAP,
+            question: "Hole gruen aus der Liste.",
+            options: null,
+            correctAnswer: "gruen",
+            hint: "gruen steht an Position 2, weil die Liste bei 0 startet.",
+            xpReward: 20,
+          },
+          {
+            id: "exercise-intermediate-listen-free-1",
+            type: ExerciseType.FREE_CODE,
+            question: "Erstelle eine Liste mit Tieren und gib Hund aus.",
+            options: null,
+            correctAnswer: "Hund",
+            hint: "Lege eine Liste an und verwende print(tiere[...]).",
+            xpReward: 25,
+          },
+        ],
+      },
+      {
+        id: "lesson-intermediate-css",
+        title: "CSS macht Webseiten bunt",
+        language: "html",
+        theory:
+          "HTML beschreibt die Bausteine, CSS gestaltet sie. Farbe, Abstand und Schrift helfen Kindern, Wirkung direkt zu sehen. Eine einfache Regel wie h1 { color: purple; } sagt: Alle h1-Ueberschriften werden lila.",
+        order: 4,
+        exercises: [
+          {
+            id: "exercise-intermediate-css-mc-1",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Wofuer ist CSS da?",
+            options: ["Webseiten gestalten", "Python ausfuehren", "Datenbank loeschen", "Bilder fotografieren"],
+            correctAnswer: "Webseiten gestalten",
+            hint: "CSS kuemmert sich um Aussehen: Farbe, Abstand, Groesse.",
+            xpReward: 15,
+          },
+          {
+            id: "exercise-intermediate-css-mc-2",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Welche CSS-Regel macht Text lila?",
+            options: ["color: purple;", "text = purple", "<purple>", "paint purple"],
+            correctAnswer: "color: purple;",
+            hint: "Die Eigenschaft heisst color.",
+            xpReward: 15,
+          },
+          {
+            id: "exercise-intermediate-css-gap-1",
+            type: ExerciseType.CODE_GAP,
+            question: "Faerbe die Ueberschrift lila.",
+            options: null,
+            correctAnswer: "purple",
+            hint: "Setze purple hinter color: ein.",
+            xpReward: 20,
+          },
+          {
+            id: "exercise-intermediate-css-free-1",
+            type: ExerciseType.FREE_CODE,
+            question: "Baue eine kleine Karte mit Ueberschrift und Hintergrundfarbe.",
+            options: null,
+            correctAnswer: "background",
+            hint: "Nutze <style> und eine CSS-Regel mit background.",
+            xpReward: 25,
+          },
+        ],
+      },
+      {
+        id: "lesson-intermediate-js-intro",
+        title: "JavaScript macht Seiten lebendig",
+        language: "html",
+        theory:
+          "JavaScript reagiert auf Klicks und veraendert Seiten. Fuer Kinder ist das ein starker Moment: Ein Button wird gedrueckt und etwas passiert sofort. In KidsCode bleibt der Einstieg klein: ein Button, ein Textfeld, eine klare Reaktion.",
+        order: 5,
+        exercises: [
+          {
+            id: "exercise-intermediate-js-mc-1",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Was kann JavaScript auf einer Webseite tun?",
+            options: ["Auf Klicks reagieren", "Nur Ueberschriften bauen", "Python ersetzen", "Den Bildschirm reinigen"],
+            correctAnswer: "Auf Klicks reagieren",
+            hint: "JavaScript macht Webseiten interaktiv.",
+            xpReward: 15,
+          },
+          {
+            id: "exercise-intermediate-js-mc-2",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Welches HTML-Element passt zu einem Klick?",
+            options: ["<button>", "<h1>", "<style>", "<ul>"],
+            correctAnswer: "<button>",
+            hint: "Ein Button ist ein Knopf.",
+            xpReward: 15,
+          },
+          {
+            id: "exercise-intermediate-js-gap-1",
+            type: ExerciseType.CODE_GAP,
+            question: "Setze den Text ein, der nach dem Klick erscheinen soll.",
+            options: null,
+            correctAnswer: "Hallo Button",
+            hint: "Der neue Text steht in Anfuehrungszeichen im JavaScript-Code.",
+            xpReward: 20,
+          },
+          {
+            id: "exercise-intermediate-js-free-1",
+            type: ExerciseType.FREE_CODE,
+            question: "Baue einen Button, der einen Text auf der Seite veraendert.",
+            options: null,
+            correctAnswer: "onclick",
+            hint: "Nutze ein button-Element und onclick.",
+            xpReward: 25,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "course-expert-lab",
+    title: "Expert Tech-Lab",
+    level: Level.EXPERT,
+    description: "C-Grundlagen, Objektorientierung in Python und ein eigenes Mini-Projekt.",
+    order: 1,
+    lessons: [
+      {
+        id: "lesson-expert-c-intro",
+        title: "C-Intro: nah am Computer",
+        language: "c",
+        theory:
+          "C ist eine aeltere, sehr wichtige Programmiersprache. Sie ist nah am Computer und zeigt deutlicher, dass Programme aus Funktionen, Typen und genauen Zeichen bestehen. Kinder sollen nicht alles auswendig koennen, sondern Muster erkennen: main, printf, Semikolon, return.",
+        order: 1,
+        exercises: [
+          {
+            id: "exercise-expert-c-mc-1",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Welche Funktion startet ein einfaches C-Programm meistens?",
+            options: ["main()", "start()", "run()", "print()"],
+            correctAnswer: "main()",
+            hint: "main ist der Einstiegspunkt vieler C-Programme.",
+            xpReward: 20,
+          },
+          {
+            id: "exercise-expert-c-mc-2",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Welcher Befehl gibt in C Text aus?",
+            options: ["printf", "print", "console.log", "echoHTML"],
+            correctAnswer: "printf",
+            hint: "printf kommt aus der C-Standardbibliothek.",
+            xpReward: 20,
+          },
+          {
+            id: "exercise-expert-c-mc-3",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Was beendet viele C-Zeilen?",
+            options: ["Ein Semikolon ;", "Ein Punkt .", "Ein Doppelstern **", "Ein HTML-Tag"],
+            correctAnswer: "Ein Semikolon ;",
+            hint: "C ist bei Satzzeichen strenger als Python.",
+            xpReward: 20,
+          },
+          {
+            id: "exercise-expert-c-mc-4",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Was bedeutet int vor main?",
+            options: ["Die Funktion gibt eine ganze Zahl zurueck", "Die Funktion ist eine Webseite", "Der Text wird lila", "Das Programm ist fertig"],
+            correctAnswer: "Die Funktion gibt eine ganze Zahl zurueck",
+            hint: "int ist ein Typ fuer ganze Zahlen.",
+            xpReward: 20,
+          },
+        ],
+      },
+      {
+        id: "lesson-expert-python-oop",
+        title: "OOP in Python: eigene Bauplaene",
+        language: "python",
+        theory:
+          "Objektorientierung hilft, Dinge aus der Welt als Code-Bauplaene zu beschreiben. Eine Klasse ist der Bauplan, ein Objekt ist ein konkretes Ding daraus. So kann ein Spiel viele Figuren haben, die alle Name, Punkte und Verhalten besitzen.",
+        order: 2,
+        exercises: [
+          {
+            id: "exercise-expert-oop-mc-1",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Was ist eine Klasse?",
+            options: ["Ein Bauplan fuer Objekte", "Eine einzelne Zahl", "Ein HTML-Link", "Eine Fehlermeldung"],
+            correctAnswer: "Ein Bauplan fuer Objekte",
+            hint: "Aus einer Klasse koennen mehrere Objekte entstehen.",
+            xpReward: 20,
+          },
+          {
+            id: "exercise-expert-oop-mc-2",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Was macht __init__ in vielen Python-Klassen?",
+            options: ["Es bereitet ein neues Objekt vor", "Es loescht eine Liste", "Es startet HTML", "Es schliesst den Browser"],
+            correctAnswer: "Es bereitet ein neues Objekt vor",
+            hint: "__init__ laeuft, wenn ein neues Objekt gebaut wird.",
+            xpReward: 20,
+          },
+          {
+            id: "exercise-expert-oop-gap-1",
+            type: ExerciseType.CODE_GAP,
+            question: "Gib dem Objekt den Namen Byte.",
+            options: null,
+            correctAnswer: "Byte",
+            hint: "Setze Byte als Text in den Konstruktor ein.",
+            xpReward: 25,
+          },
+          {
+            id: "exercise-expert-oop-free-1",
+            type: ExerciseType.FREE_CODE,
+            question: "Schreibe eine kleine Klasse, die Hallo Klasse ausgibt.",
+            options: null,
+            correctAnswer: "Hallo Klasse",
+            hint: 'Eine Methode in einer Klasse kann print("Hallo Klasse") ausfuehren.',
+            xpReward: 30,
+          },
+        ],
+      },
+      {
+        id: "lesson-expert-mini-projekt",
+        title: "Mini-Projekt: Idee planen und bauen",
+        language: "html",
+        theory:
+          "Im Abschlussprojekt zaehlt nicht nur Syntax, sondern ein kleiner Produktgedanke: Was soll passieren? Welche Bausteine braucht die Seite? Welche Aktion prueft das Kind? Das Projekt kombiniert HTML-Struktur, Gestaltung und eine kleine Interaktion.",
+        order: 3,
+        exercises: [
+          {
+            id: "exercise-expert-projekt-mc-1",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Was ist ein guter erster Schritt fuer ein Mini-Projekt?",
+            options: ["Die Idee in kleine Teile zerlegen", "Sofort alles gleichzeitig bauen", "Keine Tests machen", "Nur die Farben aussuchen"],
+            correctAnswer: "Die Idee in kleine Teile zerlegen",
+            hint: "Kleine Schritte machen Projekte ueberschaubar.",
+            xpReward: 20,
+          },
+          {
+            id: "exercise-expert-projekt-mc-2",
+            type: ExerciseType.MULTIPLE_CHOICE,
+            question: "Welche Mischung passt zu einer interaktiven Webseite?",
+            options: ["HTML, CSS und JavaScript", "Nur Semikolons", "Nur Python-Listen", "Nur Datenbanktabellen"],
+            correctAnswer: "HTML, CSS und JavaScript",
+            hint: "HTML baut, CSS gestaltet, JavaScript reagiert.",
+            xpReward: 20,
+          },
+          {
+            id: "exercise-expert-projekt-gap-1",
+            type: ExerciseType.CODE_GAP,
+            question: "Ergaenze den Punkt, damit der Zaehler steigt.",
+            options: null,
+            correctAnswer: "score = score + 1",
+            hint: "Ein Zaehler wird groesser, indem du 1 addierst.",
+            xpReward: 25,
+          },
+          {
+            id: "exercise-expert-projekt-free-1",
+            type: ExerciseType.FREE_CODE,
+            question: "Baue eine kleine Projektseite mit Titel, Button und sichtbarem Ergebnis.",
+            options: null,
+            correctAnswer: "button",
+            hint: "Ein Titel mit <h1>, ein <button> und ein sichtbarer Text reichen fuer den Anfang.",
+            xpReward: 30,
           },
         ],
       },
