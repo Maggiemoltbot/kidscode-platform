@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+  EXPERT
+}
+
+enum ExerciseType {
+  MULTIPLE_CHOICE
+  CODE_GAP
+  FREE_CODE
+}
+
+model User {
+  id           String     @id @default(cuid())
+  username     String
+  avatar       String
+  createdAt    DateTime   @default(now())
+  xp           Int        @default(0)
+  streak       Int        @default(0)
+  lastActiveAt DateTime?
+  progress     Progress[]
+  badges       Badge[]
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  level       Level
+  description String
+  order       Int
+  lessons     Lesson[]
+
+  @@index([level, order])
+}
+
+model Lesson {
+  id        String     @id @default(cuid())
+  courseId  String
+  course    Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title     String
+  language  String
+  theory    String
+  order     Int
+  exercises Exercise[]
+
+  @@index([courseId, order])
+}
+
+model Exercise {
+  id            String       @id @default(cuid())
+  lessonId      String
+  lesson        Lesson       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  type          ExerciseType
+  question      String
+  options       Json?
+  correctAnswer String
+  hint          String
+  xpReward      Int          @default(10)
+  progress      Progress[]
+
+  @@index([lessonId])
+}
+
+model Progress {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exerciseId  String
+  exercise    Exercise  @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  completed   Boolean   @default(false)
+  correct     Boolean   @default(false)
+  attempts    Int       @default(0)
+  completedAt DateTime?
+
+  @@unique([userId, exerciseId])
+  @@index([userId])
+}
+
+model Badge {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name     String
+  icon     String
+  earnedAt DateTime @default(now())
+
+  @@unique([userId, name])
+}
