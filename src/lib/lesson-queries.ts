@@ -27,6 +27,7 @@ export type LessonDetailData = {
 
 export type ExercisePreviewData = LessonExerciseData & {
   options: string[];
+  starterCode: string;
   totalExercises: number;
   lesson: {
     id: string;
@@ -55,6 +56,15 @@ const exerciseTypeOrder: Record<string, number> = {
   FREE_CODE: 3,
 };
 
+const starterCodeByExercise: Record<string, string> = {
+  "exercise-python-hallo-gap-1": 'print("____")',
+  "exercise-python-variablen-gap-1": 'name = "____"\nprint("Hallo " + name)',
+  "exercise-python-rechnen-free-1": "",
+  "exercise-html-bausteine-gap-1": "<h1>____</h1>\n<p>Meine erste Webseite</p>",
+  "exercise-html-links-free-1": "",
+  "exercise-html-listen-gap-1": "<ul>\n  ____Apfel</li>\n</ul>",
+};
+
 export function sortLessonExercises<T extends { id: string; type: string }>(exercises: T[]) {
   return [...exercises].sort((a, b) => {
     const typeDiff = (exerciseTypeOrder[a.type] ?? 99) - (exerciseTypeOrder[b.type] ?? 99);
@@ -81,6 +91,24 @@ function getDefaultSample(language: string) {
   }
 
   return 'print("Meine Idee")';
+}
+
+function getStarterCode(exerciseId: string, exerciseType: string, language: string) {
+  const starterCode = starterCodeByExercise[exerciseId];
+
+  if (starterCode !== undefined) {
+    return starterCode;
+  }
+
+  if (exerciseType === "FREE_CODE") {
+    return "";
+  }
+
+  if (language.toLowerCase() === "html") {
+    return "<h1>____</h1>\n<p>Hier steht dein Text.</p>";
+  }
+
+  return 'print("____")';
 }
 
 function getMascotMessage(language: string, title: string) {
@@ -174,6 +202,7 @@ export async function getExercisePreviewByLevel(
     xpReward: exercise.xpReward,
     order: exerciseOrder,
     options: parseOptions(exercise.options),
+    starterCode: getStarterCode(exercise.id, exercise.type, exercise.lesson.language),
     totalExercises: orderedExercises.length,
     lesson: {
       id: exercise.lesson.id,

@@ -9,6 +9,22 @@ const firstLessonBadge = {
 
 export const dynamic = "force-dynamic";
 
+function normalizeCodeAnswer(value: string) {
+  return value.replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function isExerciseAnswerCorrect(type: string, answer: string, correctAnswer: string) {
+  if (type === "MULTIPLE_CHOICE") {
+    return answer === correctAnswer;
+  }
+
+  if (answer.includes("____")) {
+    return false;
+  }
+
+  return normalizeCodeAnswer(answer).includes(normalizeCodeAnswer(correctAnswer));
+}
+
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as {
     userId?: unknown;
@@ -55,14 +71,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Uebung nicht gefunden." }, { status: 404 });
   }
 
-  if (exercise.type !== "MULTIPLE_CHOICE") {
-    return NextResponse.json(
-      { error: "Dieser Uebungstyp wird in der naechsten Phase bewertet." },
-      { status: 400 }
-    );
-  }
-
-  const isCorrect = answer === exercise.correctAnswer;
+  const isCorrect = isExerciseAnswerCorrect(exercise.type, answer, exercise.correctAnswer);
   const orderedExercises = sortLessonExercises(exercise.lesson.exercises);
   const lessonExerciseIds = orderedExercises.map((lessonExercise) => lessonExercise.id);
   const currentIndex = lessonExerciseIds.indexOf(exercise.id);
@@ -186,7 +195,7 @@ export async function POST(request: Request) {
       totalCount: lessonExerciseIds.length,
       nextExerciseId: nextExercise?.id ?? null,
       badgeAwarded,
-      correctAnswer: isCorrect ? undefined : exercise.correctAnswer,
+      correctAnswer: !isCorrect && exercise.type === "MULTIPLE_CHOICE" ? exercise.correctAnswer : undefined,
     };
   });
 

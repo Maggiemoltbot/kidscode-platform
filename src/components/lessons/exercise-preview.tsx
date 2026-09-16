@@ -10,13 +10,20 @@ import {
   BadgeCheck,
   CheckCircle2,
   CircleDot,
+  Code2,
+  Loader2,
+  Monitor,
+  Play,
   Sparkles,
+  Terminal,
   Trophy,
   XCircle,
 } from "lucide-react";
+import { CodeEditor } from "@/components/editor/code-editor";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { PROFILE_STORAGE_KEY } from "@/lib/storage-keys";
 import { type ExercisePreviewData } from "@/lib/lesson-queries";
+import { runPythonCode } from "@/lib/pyodide-loader";
 import { type LevelConfig } from "@/lib/level-config";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +50,10 @@ type ProgressResult = {
   correctAnswer?: string;
 };
 
+type CodeLanguage = "python" | "html";
+
+const emptyTerminal = "Noch keine Ausgabe.";
+
 const confettiParticles = Array.from({ length: 24 }, (_, index) => {
   const angle = (index / 24) * Math.PI * 2;
   const distance = 72 + (index % 5) * 12;
@@ -68,6 +79,10 @@ function getExerciseTypeLabel(type: string) {
   return "Freier Code";
 }
 
+function getEditorLanguage(language: string): CodeLanguage {
+  return language.toLowerCase() === "html" ? "html" : "python";
+}
+
 export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
@@ -77,51 +92,116 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [codeValue, setCodeValue] = useState(exercise.starterCode);
+  const [terminalOutput, setTerminalOutput] = useState(emptyTerminal);
+  const [runtimeError, setRuntimeError] = useState<string | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+
+  const editorLanguage = useMemo(() => getEditorLanguage(exercise.lesson.language), [exercise.lesson.language]);
+  const isMultipleChoice = exercise.type === "MULTIPLE_CHOICE" && exercise.options.length > 0;
+  const isCodeExercise = exercise.type === "CODE_GAP" || exercise.type === "FREE_CODE";
 
   const progressPercent = useMemo(() => {
     const completedCount = result?.completedCount ?? Math.max(exercise.order - 1, 0);
     return Math.min(100, Math.round((completedCount / exercise.totalExercises) * 100));
   }, [exercise.order, exercise.totalExercises, result?.completedCount]);
 
-  const isMultipleChoice = exercise.type === "MULTIPLE_CHOICE" && exercise.options.length > 0;
-
   useEffect(() => {
     setUserId(window.localStorage.getItem(PROFILE_STORAGE_KEY));
     setHasCheckedProfile(true);
   }, []);
 
-  async function submitAnswer(answer: string) {
+  useEffect(() => {
+    setSelectedAnswer(null);
+    setResult(null);
+    setError(null);
+    setShowCompletion(false);
+    setCodeValue(exercise.starterCode);
+    setTerminalOutput(emptyTerminal);
+    setRuntimeError(null);
+    setIsRunning(false);
+  }, [exercise.id, exercise.starterCode]);
+
+  async function submitAnswer(answer: string, selectedValue: string | null = answer) {
     if (!userId || result || isSubmitting) {
-      return;
+      return null;
     }
 
-    setSelectedAnswer(answer);
+    setSelectedAnswer(selectedValue);
     setError(null);
     setIsSubmitting(true);
 
-    const response = await fetch("/api/progress", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        userId,
-        exerciseId: exercise.id,
-        answer,
-      }),
-    });
+    try {
+      const response = await fetch("/api/progress", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          exerciseId: exercise.id,
+          answer,
+        }),
+      });
 
-    const payload = (await response.json().catch(() => null)) as ProgressResult | { error?: string } | null;
-    setIsSubmitting(false);
+      const payload = (await response.json().catch(() => null)) as ProgressResult | { error?: string } | null;
 
-    if (!response.ok || !payload) {
-      const errorPayload = payload as { error?: string } | null;
-      setError(errorPayload?.error ?? "Die Antwort konnte gerade nicht gespeichert werden.");
+      if (!response.ok || !payload) {
+        const errorPayload = payload as { error?: string } | null;
+        setError(errorPayload?.error ?? "Die Antwort konnte gerade nicht gespeichert werden.");
+        setSelectedAnswer(null);
+        return null;
+      }
+
+      const progressResult = payload as ProgressResult;
+      setResult(progressResult);
+      return progressResult;
+    } catch {
+      setError("Die Antwort konnte gerade nicht gespeichert werden.");
       setSelectedAnswer(null);
+      return null;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleRunCode() {
+    if (!userId || result || isSubmitting || isRunning) {
       return;
     }
 
-    setResult(payload as ProgressResult);
+    setError(null);
+    setRuntimeError(null);
+    setIsRunning(true);
+
+    try {
+      if (codeValue.includes("____")) {
+        setRuntimeError("Da ist noch eine Luecke offen.");
+        return;
+      }
+
+      if (editorLanguage === "python") {
+        setTerminalOutput("Python startet...");
+        const execution = await runPythonCode(codeValue);
+        setTerminalOutput(execution.output || "(kein Text ausgegeben)");
+
+        if (execution.error) {
+          setRuntimeError(execution.error);
+          return;
+        }
+
+        await submitAnswer(execution.output || " ", null);
+        return;
+      }
+
+      setTerminalOutput("Vorschau geprueft.");
+      await submitAnswer(codeValue.trim() || " ", null);
+    } catch (caughtError) {
+      const message = caughtError instanceof Error ? caughtError.message : "Pyodide konnte nicht gestartet werden.";
+      setRuntimeError(message);
+    } finally {
+      setIsRunning(false);
+    }
   }
 
   function handleNext() {
@@ -132,6 +212,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
     if (!result.correct) {
       setSelectedAnswer(null);
       setResult(null);
+      setRuntimeError(null);
       return;
     }
 
@@ -296,12 +377,21 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
                 );
               })}
             </div>
+          ) : isCodeExercise ? (
+            <CodePracticePanel
+              exercise={exercise}
+              language={editorLanguage}
+              codeValue={codeValue}
+              terminalOutput={terminalOutput}
+              runtimeError={runtimeError}
+              result={result}
+              isBusy={isRunning || isSubmitting}
+              onCodeChange={setCodeValue}
+              onRunCode={() => void handleRunCode()}
+            />
           ) : (
             <div className="mt-8 rounded-lg bg-muted p-5">
-              <p className="font-black">Dieser Uebungstyp kommt in M6.</p>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Code-Luecken und freie Code-Aufgaben werden mit CodeMirror und Pyodide umgesetzt.
-              </p>
+              <p className="font-black">Dieser Uebungstyp ist noch nicht verfuegbar.</p>
             </div>
           )}
 
@@ -325,7 +415,9 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
                   ? result.alreadyCompleted
                     ? "Diese Uebung war schon erledigt, deshalb gibt es keine doppelten XP."
                     : `Du bekommst ${result.xpEarned} XP.`
-                  : "Der rote Knopf zeigt deine Auswahl. Die gruene Antwort hilft dir beim Lernen."}
+                  : isMultipleChoice
+                    ? "Der rote Knopf zeigt deine Auswahl. Die gruene Antwort hilft dir beim Lernen."
+                    : "Schau in die Ausgabe und pruefe, ob dein Code genau das erwartete Ergebnis zeigt."}
               </p>
               <Button className="mt-5 h-11 px-5 text-base" onClick={handleNext}>
                 {result.correct ? "Weiter" : "Nochmal probieren"}
@@ -354,6 +446,86 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
           </div>
         </aside>
       </section>
+    </div>
+  );
+}
+
+type CodePracticePanelProps = {
+  exercise: ExercisePreviewData;
+  language: CodeLanguage;
+  codeValue: string;
+  terminalOutput: string;
+  runtimeError: string | null;
+  result: ProgressResult | null;
+  isBusy: boolean;
+  onCodeChange: (value: string) => void;
+  onRunCode: () => void;
+};
+
+function CodePracticePanel({
+  exercise,
+  language,
+  codeValue,
+  terminalOutput,
+  runtimeError,
+  result,
+  isBusy,
+  onCodeChange,
+  onRunCode,
+}: CodePracticePanelProps) {
+  const actionLabel = language === "python" ? "Ausfuehren" : "Pruefen";
+
+  return (
+    <div className="mt-8 grid gap-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Code2 className="size-6" aria-hidden="true" />
+          </span>
+          <div>
+            <p className="text-sm font-black uppercase tracking-normal text-muted-foreground">
+              {language === "python" ? "Python Editor" : "HTML Editor"}
+            </p>
+            <p className="font-black">{exercise.type === "CODE_GAP" ? "Luecke fuellen" : "Eigener Code"}</p>
+          </div>
+        </div>
+        <Button className="h-11 px-5 text-base" disabled={isBusy || Boolean(result)} onClick={onRunCode}>
+          {isBusy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Play className="size-5" aria-hidden="true" />}
+          {actionLabel}
+        </Button>
+      </div>
+
+      <CodeEditor language={language} value={codeValue} onChange={onCodeChange} readOnly={Boolean(result?.correct)} />
+
+      {language === "html" ? (
+        <div className="rounded-lg border border-border bg-background p-4">
+          <div className="mb-3 flex items-center gap-2 text-sm font-black text-muted-foreground">
+            <Monitor className="size-4" aria-hidden="true" />
+            Vorschau
+          </div>
+          <iframe
+            title="HTML Vorschau"
+            sandbox=""
+            srcDoc={codeValue}
+            className="h-56 w-full rounded-lg border border-border bg-white"
+          />
+        </div>
+      ) : null}
+
+      <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4 text-neutral-100 shadow-sm">
+        <div className="mb-3 flex items-center gap-2 text-sm font-black text-neutral-300">
+          <Terminal className="size-4" aria-hidden="true" />
+          {language === "python" ? "Terminal" : "Pruefung"}
+        </div>
+        <pre
+          className={cn(
+            "min-h-20 whitespace-pre-wrap break-words font-mono text-sm leading-6",
+            runtimeError ? "text-red-200" : "text-emerald-100"
+          )}
+        >
+          {runtimeError ?? terminalOutput}
+        </pre>
+      </div>
     </div>
   );
 }
