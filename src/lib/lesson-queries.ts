@@ -26,6 +26,8 @@ export type LessonDetailData = {
 };
 
 export type ExercisePreviewData = LessonExerciseData & {
+  options: string[];
+  totalExercises: number;
   lesson: {
     id: string;
     title: string;
@@ -34,6 +36,7 @@ export type ExercisePreviewData = LessonExerciseData & {
       title: string;
     };
   };
+  orderedExerciseIds: string[];
 };
 
 const sampleCodeByLesson: Record<string, string> = {
@@ -52,7 +55,7 @@ const exerciseTypeOrder: Record<string, number> = {
   FREE_CODE: 3,
 };
 
-function sortExercises<T extends { id: string; type: string }>(exercises: T[]) {
+export function sortLessonExercises<T extends { id: string; type: string }>(exercises: T[]) {
   return [...exercises].sort((a, b) => {
     const typeDiff = (exerciseTypeOrder[a.type] ?? 99) - (exerciseTypeOrder[b.type] ?? 99);
 
@@ -62,6 +65,14 @@ function sortExercises<T extends { id: string; type: string }>(exercises: T[]) {
 
     return a.id.localeCompare(b.id);
   });
+}
+
+function parseOptions(options: unknown) {
+  if (!Array.isArray(options)) {
+    return [];
+  }
+
+  return options.filter((option): option is string => typeof option === "string");
 }
 
 function getDefaultSample(language: string) {
@@ -109,7 +120,7 @@ export async function getLessonByLevel(levelSlug: LevelSlug, lessonId: string): 
       id: lesson.course.id,
       title: lesson.course.title,
     },
-    exercises: sortExercises(lesson.exercises).map((exercise, index) => ({
+    exercises: sortLessonExercises(lesson.exercises).map((exercise, index) => ({
       id: exercise.id,
       type: exercise.type,
       question: exercise.question,
@@ -152,8 +163,8 @@ export async function getExercisePreviewByLevel(
     return null;
   }
 
-  const exerciseOrder =
-    sortExercises(exercise.lesson.exercises).findIndex((lessonExercise) => lessonExercise.id === exercise.id) + 1;
+  const orderedExercises = sortLessonExercises(exercise.lesson.exercises);
+  const exerciseOrder = orderedExercises.findIndex((lessonExercise) => lessonExercise.id === exercise.id) + 1;
 
   return {
     id: exercise.id,
@@ -162,6 +173,8 @@ export async function getExercisePreviewByLevel(
     hint: exercise.hint,
     xpReward: exercise.xpReward,
     order: exerciseOrder,
+    options: parseOptions(exercise.options),
+    totalExercises: orderedExercises.length,
     lesson: {
       id: exercise.lesson.id,
       title: exercise.lesson.title,
@@ -170,5 +183,6 @@ export async function getExercisePreviewByLevel(
         title: exercise.lesson.course.title,
       },
     },
+    orderedExerciseIds: orderedExercises.map((lessonExercise) => lessonExercise.id),
   };
 }
