@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Award, BookOpen, Flame, Loader2, Trophy } from "lucide-react";
+import { animate, motion } from "framer-motion";
+import { ArrowRight, Award, BookOpen, Flame, Trophy } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PROFILE_STORAGE_KEY } from "@/lib/storage-keys";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +32,9 @@ type DashboardData = {
     total: number;
     percent: number;
   }[];
+  levelUp: {
+    beginnerComplete: boolean;
+  };
 };
 
 export function ProfileDashboard() {
@@ -76,9 +81,10 @@ export function ProfileDashboard() {
       <main className="mx-auto w-full max-w-6xl px-6 py-10 sm:px-8 lg:px-10">
         <div className="grid gap-4 md:grid-cols-3">
           {[0, 1, 2].map((item) => (
-            <div key={item} className="h-36 animate-pulse rounded-lg bg-muted" />
+            <Skeleton key={item} className="h-36" />
           ))}
         </div>
+        <Skeleton className="mt-8 h-80" />
       </main>
     );
   }
@@ -97,6 +103,29 @@ export function ProfileDashboard() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-6 py-10 sm:px-8 lg:px-10">
+      {data.levelUp.beginnerComplete ? (
+        <motion.section
+          className="mb-8 overflow-hidden rounded-lg border border-primary/20 bg-gradient-to-r from-primary/15 via-accent/10 to-emerald-400/15 p-6 shadow-sm"
+          initial={{ opacity: 0, y: -14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+        >
+          <p className="text-sm font-black uppercase tracking-normal text-accent">Level-Up</p>
+          <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-3xl font-black">Du bist jetzt auf Intermediate!</h2>
+              <p className="mt-2 max-w-2xl text-muted-foreground">
+                Alle Beginner-Uebungen sind geschafft. Die naechsten Kurse sind freigeschaltet.
+              </p>
+            </div>
+            <Link href="/courses/intermediate" className={cn(buttonVariants({ size: "lg" }), "h-12 px-5 text-base")}>
+              Weiter zum Level
+              <ArrowRight className="size-5" aria-hidden="true" />
+            </Link>
+          </div>
+        </motion.section>
+      ) : null}
+
       <section className="grid gap-4 md:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
@@ -111,16 +140,20 @@ export function ProfileDashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid gap-4 min-[420px]:grid-cols-2">
           <div className="rounded-lg border border-primary/20 bg-primary/10 p-5">
             <Trophy className="size-7 text-primary" aria-hidden="true" />
             <p className="mt-4 text-sm font-black text-muted-foreground">XP</p>
-            <p className="text-4xl font-black">{data.user.xp}</p>
+            <p className="text-4xl font-black">
+              <AnimatedNumber value={data.user.xp} />
+            </p>
           </div>
           <div className="rounded-lg border border-accent/20 bg-accent/10 p-5">
             <Flame className="size-7 text-accent" aria-hidden="true" />
             <p className="mt-4 text-sm font-black text-muted-foreground">Streak</p>
-            <p className="text-4xl font-black">{data.user.streak}</p>
+            <p className="text-4xl font-black">
+              <AnimatedNumber value={data.user.streak} />
+            </p>
           </div>
         </div>
       </section>
@@ -186,4 +219,22 @@ export function ProfileDashboard() {
       </div>
     </main>
   );
+}
+
+function AnimatedNumber({ value }: { value: number }) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    const controls = animate(0, value, {
+      duration: 0.75,
+      ease: "easeOut",
+      onUpdate: (latest) => {
+        setDisplayValue(Math.round(latest));
+      },
+    });
+
+    return () => controls.stop();
+  }, [value]);
+
+  return <>{displayValue}</>;
 }

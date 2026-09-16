@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
+import {
+  buildGamificationStats,
+  getEligibleBadges,
+  getStreakAfterActivity,
+  type BadgeDefinition,
+} from "@/lib/gamification";
 import { prisma } from "@/lib/prisma";
 import { sortLessonExercises } from "@/lib/lesson-queries";
-
-const firstLessonBadge = {
-  name: "Erster Schritt",
-  icon: "🌟",
-};
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,8 @@ export async function POST(request: Request) {
       },
       select: {
         id: true,
+        streak: true,
+        lastActiveAt: true,
       },
     }),
     prisma.exercise.findUnique({
@@ -78,6 +81,7 @@ export async function POST(request: Request) {
   const now = new Date();
 
   const result = await prisma.$transaction(async (tx) => {
+    const nextStreak = getStreakAfterActivity(user.streak, user.lastActiveAt, now);
     const existingProgress = await tx.progress.findUnique({
       where: {
         userId_exerciseId: {
@@ -126,10 +130,12 @@ export async function POST(request: Request) {
       },
       data: {
         xp: xpEarned > 0 ? { increment: xpEarned } : undefined,
+        streak: nextStreak,
         lastActiveAt: now,
       },
       select: {
         xp: true,
+        streak: true,
       },
     });
 
@@ -153,34 +159,66 @@ export async function POST(request: Request) {
         .slice(Math.max(currentIndex + 1, 0))
         .find((lessonExercise) => !completedExerciseIds.has(lessonExercise.id)) ?? null;
 
-    let badgeAwarded: typeof firstLessonBadge | null = null;
-
-    if (lessonCompleted) {
-      const existingBadge = await tx.badge.findUnique({
+    const [allProgress, allCourses, existingBadges] = await Promise.all([
+      tx.progress.findMany({
         where: {
-          userId_name: {
-            userId,
-            name: firstLessonBadge.name,
-          },
-        },
-      });
-
-      await tx.badge.upsert({
-        where: {
-          userId_name: {
-            userId,
-            name: firstLessonBadge.name,
-          },
-        },
-        update: {},
-        create: {
           userId,
-          name: firstLessonBadge.name,
-          icon: firstLessonBadge.icon,
         },
-      });
+        select: {
+          exerciseId: true,
+          completed: true,
+          correct: true,
+          attempts: true,
+        },
+      }),
+      tx.course.findMany({
+        select: {
+          id: true,
+          level: true,
+          lessons: {
+            select: {
+              id: true,
+              language: true,
+              exercises: {
+                select: {
+                  id: true,
+                  type: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+      tx.badge.findMany({
+        where: {
+          userId,
+        },
+        select: {
+          name: true,
+        },
+      }),
+    ]);
 
-      badgeAwarded = existingBadge ? null : firstLessonBadge;
+    const stats = buildGamificationStats({
+      courses: allCourses,
+      progress: allProgress,
+      xp: updatedUser.xp,
+      streak: updatedUser.streak,
+    });
+    const existingBadgeNames = new Set(existingBadges.map((badge) => badge.name));
+    const badgesAwarded: BadgeDefinition[] = [];
+
+    for (const badge of getEligibleBadges(stats)) {
+      if (!existingBadgeNames.has(badge.name)) {
+        await tx.badge.create({
+          data: {
+            userId,
+            name: badge.name,
+            icon: badge.icon,
+          },
+        });
+        badgesAwarded.push(badge);
+      }
     }
 
     return {
@@ -194,7 +232,8 @@ export async function POST(request: Request) {
       completedCount: completedExerciseIds.size,
       totalCount: lessonExerciseIds.length,
       nextExerciseId: nextExercise?.id ?? null,
-      badgeAwarded,
+      badgeAwarded: badgesAwarded[0] ?? null,
+      badgesAwarded,
       correctAnswer: !isCorrect && exercise.type === "MULTIPLE_CHOICE" ? exercise.correctAnswer : undefined,
     };
   });

@@ -32,6 +32,11 @@ type ExercisePreviewProps = {
   exercise: ExercisePreviewData;
 };
 
+type AwardedBadge = {
+  name: string;
+  icon: string;
+};
+
 type ProgressResult = {
   attempts: number;
   completed: boolean;
@@ -43,10 +48,8 @@ type ProgressResult = {
   completedCount: number;
   totalCount: number;
   nextExerciseId: string | null;
-  badgeAwarded: {
-    name: string;
-    icon: string;
-  } | null;
+  badgeAwarded: AwardedBadge | null;
+  badgesAwarded?: AwardedBadge[];
   correctAnswer?: string;
 };
 
@@ -230,6 +233,13 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
   }
 
   if (showCompletion && result) {
+    const awardedBadges =
+      result.badgesAwarded && result.badgesAwarded.length > 0
+        ? result.badgesAwarded
+        : result.badgeAwarded
+          ? [result.badgeAwarded]
+          : [];
+
     return (
       <div className="mx-auto grid min-h-[calc(100svh-8rem)] w-full max-w-4xl place-items-center px-6 py-10 sm:px-8 lg:px-10">
         <motion.section
@@ -252,10 +262,14 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
           >
             +{result.xpEarned} XP
           </motion.p>
-          {result.badgeAwarded ? (
-            <div className="mx-auto mt-6 max-w-sm rounded-lg bg-accent/10 p-5">
-              <p className="text-4xl">{result.badgeAwarded.icon}</p>
-              <p className="mt-2 text-xl font-black">{result.badgeAwarded.name}</p>
+          {awardedBadges.length > 0 ? (
+            <div className="mx-auto mt-6 grid max-w-2xl gap-3 sm:grid-cols-2">
+              {awardedBadges.map((badge) => (
+                <div key={badge.name} className="rounded-lg bg-accent/10 p-5">
+                  <p className="text-4xl">{badge.icon}</p>
+                  <p className="mt-2 text-xl font-black">{badge.name}</p>
+                </div>
+              ))}
             </div>
           ) : (
             <p className="mt-5 text-muted-foreground">Dein Fortschritt wurde gespeichert.</p>
