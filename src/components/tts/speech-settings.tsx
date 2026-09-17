@@ -2,15 +2,19 @@
 import { useEffect, useState } from "react";
 import { type Language } from "@/lib/tts";
 
-export function useSpeechSettings() {
+export function useSpeechSettings(defaultAutoplay = false) {
   const [autoplay, setAutoplay] = useState(false);
   const [readOptions, setReadOptions] = useState(false);
   useEffect(() => {
     try {
-      setAutoplay(localStorage.getItem("kidscode-speech-autoplay") === "true");
+      const savedAutoplay = localStorage.getItem("kidscode-speech-autoplay");
+      setAutoplay(savedAutoplay === null ? defaultAutoplay : savedAutoplay === "true");
       setReadOptions(localStorage.getItem("kidscode-speech-options") === "true");
-    } catch { /* Gesperrter Speicher: Einstellungen gelten für diese Seite. */ }
-  }, []);
+    } catch {
+      setAutoplay(defaultAutoplay);
+      // Gesperrter Speicher: Einstellungen gelten für diese Seite.
+    }
+  }, [defaultAutoplay]);
   function update(key: "autoplay" | "options", value: boolean) {
     if (key === "autoplay") setAutoplay(value); else setReadOptions(value);
     try { localStorage.setItem(`kidscode-speech-${key}`, String(value)); } catch { /* Optionaler Speicher. */ }

@@ -97,14 +97,14 @@ export function LessonTheoryView({ level, lesson: source }: LessonTheoryViewProp
         </div>
       </motion.header>
 
-      <motion.div
-        className="mb-8 overflow-hidden rounded-full bg-muted"
-        initial={{ opacity: 0, scaleX: 0.96 }}
-        animate={{ opacity: 1, scaleX: 1 }}
-        transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
-      >
-        <div className="h-3 w-[12%] rounded-full bg-gradient-to-r from-primary to-accent" />
-      </motion.div>
+      <div className="mb-8 h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+        <motion.div
+          className="h-full origin-left rounded-full bg-primary"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 0.12 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+        />
+      </div>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         <motion.main

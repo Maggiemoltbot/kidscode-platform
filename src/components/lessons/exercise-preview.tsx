@@ -111,7 +111,7 @@ export function ExercisePreview({ level, exercise: source }: ExercisePreviewProp
     value: exercise.options[index],
     label: optionLabels[index] ?? exercise.options[index],
   })) : [];
-  const speechSettings = useSpeechSettings();
+  const speechSettings = useSpeechSettings(true);
   const [feedbackIndex, setFeedbackIndex] = useState(0);
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);

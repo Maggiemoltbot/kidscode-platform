@@ -31,16 +31,16 @@ model User {
 }
 
 model Course {
-  id          String   @id @default(cuid())
-  title       String
-  level       Level
-  description String
-  title_en String?
-  title_fr String?
+  id             String   @id @default(cuid())
+  title          String
+  level          Level
+  description    String
+  title_en       String?
+  title_fr       String?
   description_en String?
   description_fr String?
-  order       Int
-  lessons     Lesson[]
+  order          Int
+  lessons        Lesson[]
 
   @@index([level, order])
 }

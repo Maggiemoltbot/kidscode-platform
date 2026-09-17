@@ -175,10 +175,12 @@ export function ProfileDashboard() {
                     {course.percent}%
                   </span>
                 </div>
-                <div className="h-3 overflow-hidden rounded-full bg-muted">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
-                    style={{ width: `${course.percent}%` }}
+                <div className="h-1.5 overflow-hidden rounded-full bg-muted" role="progressbar" aria-label={course.title} aria-valuenow={course.percent} aria-valuemin={0} aria-valuemax={100}>
+                  <motion.div
+                    className="h-full origin-left rounded-full bg-primary"
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: course.percent / 100 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
                   />
                 </div>
               </div>

@@ -7,7 +7,7 @@
 - `.env.local`: Key ausschließlich serverseitig, geschützt und nicht versioniert.
 
 ## Entscheidungen
-Eine gemeinsame AudioContext-Instanz verhindert paralleles Vorlesen. Ohne erste Benutzerinteraktion blockieren Browser Autoplay: der Play-Button bleibt verfügbar. Automatisches Vorlesen ist standardmäßig aus und explizit aktivierbar. Unpassende normalisierte Zeitstempel werden nicht irreführend markiert. Programmcode wird als Text behandelt.
+Eine gemeinsame AudioContext-Instanz verhindert paralleles Vorlesen. Ohne erste Benutzerinteraktion blockieren Browser Autoplay: der Play-Button bleibt verfügbar. Ohne gespeicherte Präferenz startet die Theorie ohne Autoplay, Übungen versuchen automatisch vorzulesen. Eine explizite Nutzerwahl gilt für beide Ansichten. Unpassende normalisierte Zeitstempel werden nicht irreführend markiert. Programmcode wird als Text behandelt.
 
 ## Verifiziert
 Build, Typecheck, Lint erfolgreich. Drei Unit-Tests erfolgreich. Echter ElevenLabs-Test in DE/EN/FR: jeweils HTTP 200, Audio und Wortzeiten vorhanden. Zweiter identischer Request jeweils Cache-Hit in 1–2 ms. Keine Schlüssel protokolliert.
