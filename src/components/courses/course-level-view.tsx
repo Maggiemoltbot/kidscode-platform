@@ -1,7 +1,10 @@
 "use client";
 
+import { Text, useLanguage, useText } from "@/components/i18n/language-provider";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { localize } from "@/lib/localization";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Code2, Home } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
@@ -35,7 +38,11 @@ const fadeInUp = {
   visible: { opacity: 1, y: 0 },
 };
 
-export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
+export function CourseLevelView({ level, courses: source }: CourseLevelViewProps) {
+  const language = useLanguage();
+  const t = useTranslations();
+  const tx = useText();
+  const courses = localize(source, language);
   const [progress, setProgress] = useState<ProgressSummary | null>(null);
   const totalLessons = courses.reduce((sum, course) => sum + course.lessonCount, 0);
   const totalExercises = courses.reduce((sum, course) => sum + course.exerciseCount, 0);
@@ -73,30 +80,28 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-8 sm:py-10 lg:px-10">
       <nav className="mb-8 flex flex-wrap items-center gap-2 text-sm font-bold text-muted-foreground">
         <Link href="/" className="inline-flex items-center gap-1 transition-colors hover:text-foreground">
-          <Home className="size-4" aria-hidden="true" />
-          Home
-        </Link>
+          <Home className="size-4" aria-hidden="true" /><Text message={"Home"} />{" "}</Link>
         <span>/</span>
-        <span className="text-foreground">{level.title}</span>
+        <span className="text-foreground">{t(`levels.${level.slug}.title`)}</span>
       </nav>
 
       <header className="grid gap-6 rounded-apple-xl bg-card p-5 shadow-sm sm:p-6 md:grid-cols-[1fr_auto] md:items-end">
         <div className="space-y-4">
           <div className={cn("inline-flex rounded-full bg-gradient-to-r px-4 py-2 text-sm font-semibold", level.accentClass)}>
-            {level.title}
+            {t(`levels.${level.slug}.title`)}
           </div>
           <div className="space-y-3">
-            <h1 className="text-3xl font-semibold text-foreground sm:text-5xl">{level.title}-Kurse</h1>
-            <p className="max-w-2xl text-base leading-7 text-muted-foreground">{level.description}</p>
+            <h1 className="text-3xl font-semibold text-foreground sm:text-5xl">{t(`levels.${level.slug}.title`)}<Text message={"-Kurse"} /></h1>
+            <p className="max-w-2xl text-base leading-7 text-muted-foreground">{t(`levels.${level.slug}.description`)}</p>
           </div>
         </div>
         <div className="grid gap-3 min-[420px]:grid-cols-2 sm:min-w-64">
           <div className="rounded-md bg-muted p-4">
-            <p className="text-sm font-bold text-muted-foreground">Lektionen</p>
+            <p className="text-sm font-bold text-muted-foreground"><Text message={"Lektionen"} /></p>
             <p className="mt-1 text-3xl font-semibold">{totalLessons}</p>
           </div>
           <div className="rounded-md bg-muted p-4">
-            <p className="text-sm font-bold text-muted-foreground">Übungen</p>
+            <p className="text-sm font-bold text-muted-foreground"><Text message={"Übungen"} /></p>
             <p className="mt-1 text-3xl font-semibold">{totalExercises}</p>
           </div>
         </div>
@@ -112,8 +117,8 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
             transition={{ duration: 0.4, ease: "easeOut" }}
           >
             <BookOpen className="mx-auto size-10 text-muted-foreground" aria-hidden="true" />
-            <h2 className="mt-4 text-2xl font-semibold">Noch keine Kurse in diesem Level</h2>
-            <p className="mt-2 text-muted-foreground">Die Inhalte werden in M8 vollständig aufgefüllt.</p>
+            <h2 className="mt-4 text-2xl font-semibold"><Text message={"Noch keine Kurse in diesem Level"} /></h2>
+            <p className="mt-2 text-muted-foreground"><Text message={"Die Inhalte werden in M8 vollständig aufgefüllt."} /></p>
           </motion.div>
         ) : (
           courses.map((course, courseIndex) => {
@@ -131,14 +136,12 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
                 <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
                   <div>
                     <p className="text-sm font-semibold uppercase tracking-normal text-accent">
-                      {course.lessonCount} Lektionen
-                    </p>
+                      {course.lessonCount}{" "}<Text message={"Lektionen"} />{" "}</p>
                     <h2 className="text-2xl font-semibold sm:text-3xl">{course.title}</h2>
                     <p className="mt-2 max-w-2xl text-muted-foreground">{course.description}</p>
                   </div>
                   <span className="w-fit rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-                    {courseProgress?.completed ?? 0} / {course.exerciseCount} erledigt
-                  </span>
+                    {courseProgress?.completed ?? 0} / {course.exerciseCount}{" "}<Text message={"erledigt"} />{" "}</span>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-3">
@@ -177,17 +180,15 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
                                   : "bg-accent/15 text-accent"
                               )}
                             >
-                              {statusLabel}
+                              {tx(statusLabel)}
                             </span>
                           </div>
                           <div className="mt-5 space-y-2">
-                            <p className="text-xs font-semibold uppercase tracking-normal text-muted-foreground">
-                              Lektion {lesson.order} · {lesson.language}
+                            <p className="text-xs font-semibold uppercase tracking-normal text-muted-foreground"><Text message={"Lektion"} />{" "}{lesson.order} · {lesson.language}
                             </p>
                             <h3 className="text-xl font-semibold text-foreground">{lesson.title}</h3>
                             <p className="text-sm text-muted-foreground">
-                              {lessonProgress?.completed ?? 0} von {lesson.exerciseCount} Übungen
-                            </p>
+                              {lessonProgress?.completed ?? 0}{" "}<Text message={"von"} />{" "}{lesson.exerciseCount}{" "}<Text message={"Übungen"} />{" "}</p>
                           </div>
                           <div className="mt-auto pt-5">
                             <div className="h-2 overflow-hidden rounded-full bg-muted">
@@ -196,9 +197,7 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
                                 style={{ width: `${lessonProgress?.percent ?? 0}%` }}
                               />
                             </div>
-                            <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary">
-                              Lektion starten
-                              <ArrowRight
+                            <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary"><Text message={"Lektion starten"} />{" "}<ArrowRight
                                 className="size-4 transition-transform group-hover:translate-x-1"
                                 aria-hidden="true"
                               />
@@ -216,9 +215,7 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
       </section>
 
       <div className="mt-10">
-        <Link href="/" className={cn(buttonVariants({ variant: "outline" }), "h-10 px-4")}>
-          Zurück zur Level-Auswahl
-        </Link>
+        <Link href="/" className={cn(buttonVariants({ variant: "outline" }), "h-10 px-4")}><Text message={"Zurück zur Level-Auswahl"} />{" "}</Link>
       </div>
     </div>
   );

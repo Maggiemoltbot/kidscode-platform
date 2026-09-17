@@ -1,4 +1,5 @@
 "use client";
+import { useText } from "@/components/i18n/language-provider";
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -8,12 +9,13 @@ type RobotMascotProps = {
 };
 
 export function RobotMascot({ className }: RobotMascotProps) {
+  const tx = useText();
   return (
     <motion.svg
       className={cn("h-auto w-full max-w-[340px]", className)}
       viewBox="0 0 340 340"
       role="img"
-      aria-label="Freundlicher KidsCode Roboter"
+      aria-label={tx("Freundlicher KidsCode Roboter")}
       initial={{ rotate: -2, y: 0 }}
       animate={{ rotate: [ -2, 2, -2 ], y: [0, -8, 0] }}
       transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}

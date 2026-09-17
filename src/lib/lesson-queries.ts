@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { levelConfigs, type LevelSlug } from "@/lib/level-config";
+import { translatedFields, type LocalizedFields } from "@/lib/localization";
 
-export type LessonExerciseData = {
+export type LessonExerciseData = LocalizedFields & {
   id: string;
   type: string;
   question: string;
@@ -10,13 +11,13 @@ export type LessonExerciseData = {
   order: number;
 };
 
-export type LessonDetailData = {
+export type LessonDetailData = LocalizedFields & {
   id: string;
   title: string;
   language: string;
   theory: string;
   order: number;
-  course: {
+  course: LocalizedFields & {
     id: string;
     title: string;
   };
@@ -27,13 +28,15 @@ export type LessonDetailData = {
 
 export type ExercisePreviewData = LessonExerciseData & {
   options: string[];
+  options_en: string[];
+  options_fr: string[];
   starterCode: string;
   totalExercises: number;
-  lesson: {
+  lesson: LocalizedFields & {
     id: string;
     title: string;
     language: string;
-    course: {
+    course: LocalizedFields & {
       title: string;
     };
   };
@@ -189,16 +192,19 @@ export async function getLessonByLevel(levelSlug: LevelSlug, lessonId: string): 
   }
 
   return {
+    ...translatedFields(lesson),
     id: lesson.id,
     title: lesson.title,
     language: lesson.language,
     theory: lesson.theory,
     order: lesson.order,
     course: {
+      ...translatedFields(lesson.course),
       id: lesson.course.id,
       title: lesson.course.title,
     },
     exercises: sortLessonExercises(lesson.exercises).map((exercise, index) => ({
+      ...translatedFields(exercise),
       id: exercise.id,
       type: exercise.type,
       question: exercise.question,
@@ -245,6 +251,7 @@ export async function getExercisePreviewByLevel(
   const exerciseOrder = orderedExercises.findIndex((lessonExercise) => lessonExercise.id === exercise.id) + 1;
 
   return {
+    ...translatedFields(exercise),
     id: exercise.id,
     type: exercise.type,
     question: exercise.question,
@@ -252,13 +259,17 @@ export async function getExercisePreviewByLevel(
     xpReward: exercise.xpReward,
     order: exerciseOrder,
     options: parseOptions(exercise.options),
+    options_en: parseOptions(exercise.options_en),
+    options_fr: parseOptions(exercise.options_fr),
     starterCode: getStarterCode(exercise.id, exercise.type, exercise.lesson.language),
     totalExercises: orderedExercises.length,
     lesson: {
+      ...translatedFields(exercise.lesson),
       id: exercise.lesson.id,
       title: exercise.lesson.title,
       language: exercise.lesson.language,
       course: {
+        ...translatedFields(exercise.lesson.course),
         title: exercise.lesson.course.title,
       },
     },

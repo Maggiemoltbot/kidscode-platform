@@ -1,9 +1,12 @@
 "use client";
 
+import { Text, useLanguage } from "@/components/i18n/language-provider";
 import { TTSPlayer } from "@/components/tts/tts-player";
 import { SpeechSettings, useSpeechSettings } from "@/components/tts/speech-settings";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { localize } from "@/lib/localization";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, CheckCircle2, ChevronRight, Home, Lightbulb, Play } from "lucide-react";
 import { RobotMascot } from "@/components/mascot/robot-mascot";
@@ -47,7 +50,10 @@ function TheoryCodeBlock({ code, language }: { code: string; language: string })
   );
 }
 
-export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
+export function LessonTheoryView({ level, lesson: source }: LessonTheoryViewProps) {
+  const language = useLanguage();
+  const t = useTranslations();
+  const lesson = localize(source, language);
   const speechSettings = useSpeechSettings();
   const firstExercise = lesson.exercises[0];
   const exerciseCount = lesson.exercises.length;
@@ -56,12 +62,10 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
     <div className="mx-auto w-full max-w-6xl px-6 py-10 sm:px-8 lg:px-10">
       <nav className="mb-8 flex flex-wrap items-center gap-2 text-sm font-bold text-muted-foreground">
         <Link href="/" className="inline-flex items-center gap-1 transition-colors hover:text-foreground">
-          <Home className="size-4" aria-hidden="true" />
-          Home
-        </Link>
+          <Home className="size-4" aria-hidden="true" /><Text message={"Home"} />{" "}</Link>
         <ChevronRight className="size-4" aria-hidden="true" />
         <Link href={`/courses/${level.slug}`} className="transition-colors hover:text-foreground">
-          {level.title}
+          {t(`levels.${level.slug}.title`)}
         </Link>
         <ChevronRight className="size-4" aria-hidden="true" />
         <span className="text-foreground">{lesson.title}</span>
@@ -76,10 +80,9 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
       >
         <div className="flex flex-wrap items-center gap-3">
           <span className={cn("inline-flex rounded-full bg-gradient-to-r px-4 py-2 text-sm font-semibold", level.accentClass)}>
-            {level.title}
+            {t(`levels.${level.slug}.title`)}
           </span>
-          <span className="inline-flex rounded-full bg-muted px-4 py-2 text-sm font-semibold text-muted-foreground">
-            Lektion {lesson.order} · {lesson.language}
+          <span className="inline-flex rounded-full bg-muted px-4 py-2 text-sm font-semibold text-muted-foreground"><Text message={"Lektion"} />{" "}{lesson.order} · {lesson.language}
           </span>
         </div>
         <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
@@ -88,8 +91,8 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
             <h1 className="mt-2 text-4xl font-semibold text-foreground sm:text-5xl">{lesson.title}</h1>
           </div>
           <div className="rounded-apple-xl bg-card p-4 shadow-sm md:min-w-56">
-            <p className="text-sm font-semibold text-muted-foreground">Nächster Schritt</p>
-            <p className="mt-1 text-2xl font-semibold">Übung 1 von {exerciseCount}</p>
+            <p className="text-sm font-semibold text-muted-foreground"><Text message={"Nächster Schritt"} /></p>
+            <p className="mt-1 text-2xl font-semibold"><Text message={"Übung 1 von"} />{" "}{exerciseCount}</p>
           </div>
         </div>
       </motion.header>
@@ -117,12 +120,12 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
                 <BookOpen className="size-5" aria-hidden="true" />
               </span>
               <div>
-                <p className="text-sm font-semibold uppercase tracking-normal text-accent">Theorie</p>
-                <h2 className="text-2xl font-semibold">Kurz erklärt</h2>
+                <p className="text-sm font-semibold uppercase tracking-normal text-accent"><Text message={"Theorie"} /></p>
+                <h2 className="text-2xl font-semibold"><Text message={"Kurz erklärt"} /></h2>
               </div>
             </div>
-            <TTSPlayer text={lesson.theory} language="de" autoplay={speechSettings.autoplay} />
-            <SpeechSettings language="de" settings={speechSettings} />
+            <TTSPlayer text={lesson.theory} language={language} autoplay={speechSettings.autoplay} />
+            <SpeechSettings language={language} settings={speechSettings} />
           </section>
 
           <section className="space-y-4 rounded-apple-xl bg-card p-6 shadow-sm">
@@ -131,8 +134,8 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
                 <Lightbulb className="size-5" aria-hidden="true" />
               </span>
               <div>
-                <p className="text-sm font-semibold uppercase tracking-normal text-accent">Beispiel</p>
-                <h2 className="text-2xl font-semibold">So sieht der Code aus</h2>
+                <p className="text-sm font-semibold uppercase tracking-normal text-accent"><Text message={"Beispiel"} /></p>
+                <h2 className="text-2xl font-semibold"><Text message={"So sieht der Code aus"} /></h2>
               </div>
             </div>
             <TheoryCodeBlock code={lesson.sampleCode} language={lesson.language} />
@@ -142,25 +145,20 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold uppercase tracking-normal text-muted-foreground">
-                  {exerciseCount} Übungen warten
-                </p>
-                <h2 className="text-2xl font-semibold">Bereit zum Ausprobieren?</h2>
+                  {exerciseCount}{" "}<Text message={"Übungen warten"} />{" "}</p>
+                <h2 className="text-2xl font-semibold"><Text message={"Bereit zum Ausprobieren?"} /></h2>
               </div>
               {firstExercise ? (
                 <Link
                   href={`/courses/${level.slug}/${lesson.id}/exercise/${firstExercise.id}`}
                   className={cn(buttonVariants({ size: "lg" }), "h-12 px-5 text-base")}
-                >
-                  Zur Übung!
-                  <Play className="size-5" aria-hidden="true" />
+                ><Text message={"Zur Übung!"} />{" "}<Play className="size-5" aria-hidden="true" />
                 </Link>
               ) : (
                 <Link
                   href={`/courses/${level.slug}`}
                   className={cn(buttonVariants({ variant: "outline", size: "lg" }), "h-12 px-5 text-base")}
-                >
-                  Zur Kursübersicht
-                  <ArrowRight className="size-5" aria-hidden="true" />
+                ><Text message={"Zur Kursübersicht"} />{" "}<ArrowRight className="size-5" aria-hidden="true" />
                 </Link>
               )}
             </div>
@@ -178,19 +176,19 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
               <RobotMascot className="mx-auto max-w-[210px]" />
             </div>
             <div className="mt-4 rounded-apple-xl border border-white/50 bg-white/80 p-5 shadow-sm backdrop-blur-xl dark:bg-white/5">
-              <p className="text-sm font-semibold text-primary">Robo sagt:</p>
-              <p className="mt-2 leading-7 text-muted-foreground">{lesson.mascotMessage}</p>
+              <p className="text-sm font-semibold text-primary"><Text message={"Robo sagt:"} /></p>
+              <p className="mt-2 leading-7 text-muted-foreground">{t(`mascot.${lesson.language.toLowerCase() === "html" ? "html" : lesson.language.toLowerCase() === "c" ? "c" : "python"}`)}</p>
             </div>
           </div>
 
           <div className="rounded-apple-xl bg-card p-5 shadow-sm">
-            <p className="text-sm font-semibold uppercase tracking-normal text-muted-foreground">In dieser Lektion</p>
+            <p className="text-sm font-semibold uppercase tracking-normal text-muted-foreground"><Text message={"In dieser Lektion"} /></p>
             <div className="mt-4 space-y-3">
               {lesson.exercises.map((exercise) => (
                 <div key={exercise.id} className="flex items-center gap-3 rounded-md bg-muted p-3">
                   <CheckCircle2 className="size-5 text-primary" aria-hidden="true" />
                   <div>
-                    <p className="text-sm font-semibold">Übung {exercise.order}</p>
+                    <p className="text-sm font-semibold"><Text message={"Übung"} />{" "}{exercise.order}</p>
                     <p className="text-xs font-bold text-muted-foreground">{exercise.xpReward} XP</p>
                   </div>
                 </div>

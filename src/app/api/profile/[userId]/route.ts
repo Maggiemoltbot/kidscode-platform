@@ -6,6 +6,7 @@ import {
   getVisibleStreak,
 } from "@/lib/gamification";
 import { prisma } from "@/lib/prisma";
+import { translatedFields } from "@/lib/localization";
 
 type ProfileRouteContext = {
   params: {
@@ -146,6 +147,7 @@ export async function GET(_request: Request, { params }: ProfileRouteContext) {
     return {
       id: course.id,
       title: course.title,
+      ...translatedFields(course),
       level: course.level,
       completed,
       correct,

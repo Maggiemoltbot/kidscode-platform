@@ -1,3 +1,4 @@
+import { Text } from "@/components/i18n/language-provider";
 import { Medal, Trophy } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
@@ -37,11 +38,9 @@ export default async function LeaderboardPage() {
       <section className="rounded-apple-xl bg-card p-5 shadow-sm sm:p-7">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-normal text-accent">Top 10</p>
-            <h1 className="mt-2 text-3xl font-semibold sm:text-5xl">Rangliste</h1>
-            <p className="mt-3 max-w-2xl text-muted-foreground">
-              Die fleissigsten KidsCode-Profile nach gesammelten XP.
-            </p>
+            <p className="text-sm font-semibold uppercase tracking-normal text-accent"><Text message={"Top 10"} /></p>
+            <h1 className="mt-2 text-3xl font-semibold sm:text-5xl"><Text message={"Rangliste"} /></h1>
+            <p className="mt-3 max-w-2xl text-muted-foreground"><Text message={"Die fleißigsten KidsCode-Profile nach gesammelten XP."} />{" "}</p>
           </div>
           <div className="flex size-14 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Trophy className="size-7" aria-hidden="true" />
@@ -53,8 +52,8 @@ export default async function LeaderboardPage() {
         {users.length === 0 ? (
           <div className="p-8 text-center">
             <Trophy className="mx-auto size-10 text-muted-foreground" aria-hidden="true" />
-            <h2 className="mt-4 text-2xl font-semibold">Noch keine Profile</h2>
-            <p className="mt-2 text-muted-foreground">Sobald Kinder Übungen lösen, erscheint hier die Rangliste.</p>
+            <h2 className="mt-4 text-2xl font-semibold"><Text message={"Noch keine Profile"} /></h2>
+            <p className="mt-2 text-muted-foreground"><Text message={"Sobald Kinder Übungen lösen, erscheint hier die Rangliste."} /></p>
           </div>
         ) : (
           <div className="divide-y divide-border">
@@ -73,8 +72,7 @@ export default async function LeaderboardPage() {
                   <div className="min-w-0">
                     <h2 className="truncate text-lg font-semibold">{user.username}</h2>
                     <p className="text-sm font-bold text-muted-foreground">
-                      {user.badges.length} Badges · {user.streak} Tage Streak
-                    </p>
+                      {user.badges.length}{" "}<Text message={"Badges ·"} />{" "}{user.streak}{" "}<Text message={"Tage Streak"} />{" "}</p>
                   </div>
                   <div className="col-span-2 rounded-md bg-primary/10 px-4 py-3 text-right sm:col-span-1">
                     <p className="text-xs font-semibold uppercase tracking-normal text-primary">XP</p>

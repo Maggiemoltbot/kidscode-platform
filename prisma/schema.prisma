@@ -35,6 +35,10 @@ model Course {
   title       String
   level       Level
   description String
+  title_en String?
+  title_fr String?
+  description_en String?
+  description_fr String?
   order       Int
   lessons     Lesson[]
 
@@ -48,6 +52,10 @@ model Lesson {
   title     String
   language  String
   theory    String
+  title_en  String?
+  title_fr  String?
+  theory_en String?
+  theory_fr String?
   order     Int
   exercises Exercise[]
 
@@ -63,6 +71,12 @@ model Exercise {
   options       Json?
   correctAnswer String
   hint          String
+  question_en   String?
+  question_fr   String?
+  options_en    Json?
+  options_fr    Json?
+  hint_en       String?
+  hint_fr       String?
   xpReward      Int          @default(10)
   progress      Progress[]
 

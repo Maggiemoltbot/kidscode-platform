@@ -1,7 +1,10 @@
 "use client";
 
+import { Text, useLanguage, useText } from "@/components/i18n/language-provider";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { localize } from "@/lib/localization";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -89,7 +92,12 @@ function getEditorLanguage(language: string): CodeLanguage {
   return language.toLowerCase() === "html" ? "html" : "python";
 }
 
-export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
+export function ExercisePreview({ level, exercise: source }: ExercisePreviewProps) {
+  const language = useLanguage();
+  const t = useTranslations();
+  const tx = useText();
+  const exercise = localize(source, language);
+  const optionLabels = language === "de" ? exercise.options : exercise[`options_${language}`];
   const speechSettings = useSpeechSettings();
   const [feedbackIndex, setFeedbackIndex] = useState(0);
   const router = useRouter();
@@ -258,7 +266,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
           <div className="mx-auto flex size-20 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <Trophy className="size-10" aria-hidden="true" />
           </div>
-          <p className="mt-6 text-sm font-semibold uppercase tracking-normal text-accent">Lektion abgeschlossen</p>
+          <p className="mt-6 text-sm font-semibold uppercase tracking-normal text-accent"><Text message={"Lektion abgeschlossen"} /></p>
           <h1 className="mt-2 text-4xl font-semibold sm:text-5xl">{exercise.lesson.title}</h1>
           <motion.p
             className="mt-5 text-3xl font-semibold text-primary"
@@ -273,24 +281,20 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
               {awardedBadges.map((badge) => (
                 <div key={badge.name} className="rounded-lg bg-accent/10 p-5">
                   <p className="text-4xl">{badge.icon}</p>
-                  <p className="mt-2 text-xl font-semibold">{badge.name}</p>
+                  <p className="mt-2 text-xl font-semibold"><Text message={badge.name} /></p>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="mt-5 text-muted-foreground">Dein Fortschritt wurde gespeichert.</p>
+            <p className="mt-5 text-muted-foreground"><Text message={"Dein Fortschritt wurde gespeichert."} /></p>
           )}
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/profile" className={cn(buttonVariants({ size: "lg" }), "h-12 px-5 text-base")}>
-              Zum Profil
-              <ArrowRight className="size-5" aria-hidden="true" />
+            <Link href="/profile" className={cn(buttonVariants({ size: "lg" }), "h-12 px-5 text-base")}><Text message={"Zum Profil"} />{" "}<ArrowRight className="size-5" aria-hidden="true" />
             </Link>
             <Link
               href={`/courses/${level.slug}`}
               className={cn(buttonVariants({ variant: "outline", size: "lg" }), "h-12 px-5 text-base")}
-            >
-              Weitere Lektionen
-            </Link>
+            ><Text message={"Weitere Lektionen"} />{" "}</Link>
           </div>
         </motion.section>
       </div>
@@ -304,9 +308,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
           href={`/courses/${level.slug}/${exercise.lesson.id}`}
           className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="size-4" aria-hidden="true" />
-          Zurück zur Theorie
-        </Link>
+          <ArrowLeft className="size-4" aria-hidden="true" /><Text message={"Zurück zur Theorie"} />{" "}</Link>
       </div>
 
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
@@ -320,10 +322,10 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
 
           <div className="flex flex-wrap items-center gap-3">
             <span className={cn("inline-flex rounded-full bg-gradient-to-r px-4 py-2 text-sm font-semibold", level.accentClass)}>
-              {level.title}
+              {t(`levels.${level.slug}.title`)}
             </span>
             <span className="inline-flex rounded-full bg-muted px-4 py-2 text-sm font-semibold text-muted-foreground">
-              {getExerciseTypeLabel(exercise.type)}
+              {tx(getExerciseTypeLabel(exercise.type))}
             </span>
           </div>
 
@@ -331,12 +333,12 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
             <p className="text-sm font-semibold uppercase tracking-normal text-accent">
               {exercise.lesson.course.title} · {exercise.lesson.title}
             </p>
-            <h1 className="text-4xl font-semibold text-foreground">Übung {exercise.order}</h1>
-            <TTSPlayer text={exercise.question + (speechSettings.readOptions ? "\n\n" + exercise.options.join(".\n\n") : "")} language="de" autoplay={speechSettings.autoplay && !result} />
-            <SpeechSettings language="de" settings={speechSettings} options={isMultipleChoice} />
+            <h1 className="text-4xl font-semibold text-foreground"><Text message={"Übung"} />{" "}{exercise.order}</h1>
+            <TTSPlayer text={exercise.question + (speechSettings.readOptions ? "\n\n" + optionLabels.join(".\n\n") : "")} language={language} autoplay={speechSettings.autoplay && !result} />
+            <SpeechSettings language={language} settings={speechSettings} options={isMultipleChoice} />
           </div>
 
-          <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label="Fortschritt">
+          <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={tx("Fortschritt")}>
             <motion.div
               className="h-full origin-left rounded-full bg-primary"
               initial={{ scaleX: Math.max(progressPercent - 12, 0) / 100 }}
@@ -349,17 +351,13 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
             <div className="mt-8 h-40 animate-pulse rounded-lg bg-muted" />
           ) : !userId ? (
             <div className="mt-8 rounded-lg bg-muted p-5">
-              <p className="font-semibold">Lege zuerst ein Profil an.</p>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Dann können XP, Badges und Fortschritt gespeichert werden.
-              </p>
-              <Link href="/profile/new" className={cn(buttonVariants(), "mt-4 h-10 px-4")}>
-                Profil anlegen
-              </Link>
+              <p className="font-semibold"><Text message={"Lege zuerst ein Profil an."} /></p>
+              <p className="mt-2 text-sm text-muted-foreground"><Text message={"Dann können XP, Badges und Fortschritt gespeichert werden."} />{" "}</p>
+              <Link href="/profile/new" className={cn(buttonVariants(), "mt-4 h-10 px-4")}><Text message={"Profil anlegen"} />{" "}</Link>
             </div>
           ) : isMultipleChoice ? (
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
-              {exercise.options.map((option) => {
+              {exercise.options.map((option, index) => {
                 const isSelected = selectedAnswer === option;
                 const isCorrectSelection = result?.correct && isSelected;
                 const isWrongSelection = result && !result.correct && isSelected;
@@ -393,7 +391,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
                       ) : (
                         <CircleDot className="size-5 text-muted-foreground" aria-hidden="true" />
                       )}
-                      <span>{option}</span>
+                      <span>{optionLabels[index] ?? option}</span>
                     </span>
                   </motion.button>
                 );
@@ -413,11 +411,11 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
             />
           ) : (
             <div className="mt-8 rounded-lg bg-muted p-5">
-              <p className="font-semibold">Dieser Übungstyp ist noch nicht verfügbar.</p>
+              <p className="font-semibold"><Text message={"Dieser Übungstyp ist noch nicht verfügbar."} /></p>
             </div>
           )}
 
-          {error ? <p className="mt-4 text-sm font-bold text-destructive">{error}</p> : null}
+          {error ? <p className="mt-4 text-sm font-bold text-destructive"><Text message={error} /></p> : null}
 
           {result ? (
             <motion.div
@@ -431,18 +429,18 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
             >
-              <TTSPlayer text={feedback.de[result.correct ? "correct" : "incorrect"][feedbackIndex]} language="de" autoplay={speechSettings.autoplay} size="sm" />
+              <TTSPlayer text={feedback[language][result.correct ? "correct" : "incorrect"][feedbackIndex]} language={language} autoplay={speechSettings.autoplay} size="sm" />
               <p className="mt-2 text-sm font-bold">
-                {result.correct
+                {tx(result.correct
                   ? result.alreadyCompleted
                     ? "Diese Übung war schon erledigt, deshalb gibt es keine doppelten XP."
-                    : `Du bekommst ${result.xpEarned} XP.`
+                    : tx("Du bekommst {count} XP.", { count: result.xpEarned })
                   : isMultipleChoice
                     ? "Der rote Knopf zeigt deine Auswahl. Die grüne Antwort hilft dir beim Lernen."
-                    : "Schau in die Ausgabe und prüfe, ob dein Code genau das erwartete Ergebnis zeigt."}
+                    : "Schau in die Ausgabe und prüfe, ob dein Code genau das erwartete Ergebnis zeigt.")}
               </p>
               <Button className="mt-5 h-11 px-5 text-base" onClick={handleNext}>
-                {result.correct ? "Weiter" : "Nochmal probieren"}
+                {tx(result.correct ? "Weiter" : "Nochmal probieren")}
                 <ArrowRight className="size-5" aria-hidden="true" />
               </Button>
             </motion.div>
@@ -452,18 +450,18 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
         <aside className="space-y-4">
           <div className="rounded-apple-xl bg-card p-5 shadow-sm">
             <Sparkles className="size-7 text-primary" aria-hidden="true" />
-            <p className="mt-4 text-sm font-semibold text-muted-foreground">Belohnung</p>
+            <p className="mt-4 text-sm font-semibold text-muted-foreground"><Text message={"Belohnung"} /></p>
             <p className="text-3xl font-semibold">{exercise.xpReward} XP</p>
           </div>
           <div className="rounded-apple-xl bg-card p-5 shadow-sm">
             <BadgeCheck className="size-7 text-accent" aria-hidden="true" />
-            <p className="mt-4 text-sm font-semibold text-muted-foreground">Fortschritt</p>
+            <p className="mt-4 text-sm font-semibold text-muted-foreground"><Text message={"Fortschritt"} /></p>
             <p className="text-3xl font-semibold">
               {result?.completedCount ?? Math.max(exercise.order - 1, 0)} / {exercise.totalExercises}
             </p>
           </div>
           <div className="rounded-apple-xl bg-card p-5 shadow-sm">
-            <p className="text-sm font-semibold text-primary">Tipp</p>
+            <p className="text-sm font-semibold text-primary"><Text message={"Tipp"} /></p>
             <p className="mt-2 leading-7 text-muted-foreground">{exercise.hint}</p>
           </div>
         </aside>
@@ -495,6 +493,7 @@ function CodePracticePanel({
   onCodeChange,
   onRunCode,
 }: CodePracticePanelProps) {
+  const tx = useText();
   const actionLabel = language === "python" ? "Ausführen" : "Prüfen";
 
   return (
@@ -506,14 +505,14 @@ function CodePracticePanel({
           </span>
           <div>
             <p className="text-sm font-semibold uppercase tracking-normal text-muted-foreground">
-              {language === "python" ? "Python Editor" : "HTML Editor"}
+              {tx(language === "python" ? "Python Editor" : "HTML Editor")}
             </p>
-            <p className="font-semibold">{exercise.type === "CODE_GAP" ? "Lücke füllen" : "Eigener Code"}</p>
+            <p className="font-semibold">{tx(exercise.type === "CODE_GAP" ? "Lücke füllen" : "Eigener Code")}</p>
           </div>
         </div>
         <Button className="h-11 px-5 text-base" disabled={isBusy || Boolean(result)} onClick={onRunCode}>
           {isBusy ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : <Play className="size-5" aria-hidden="true" />}
-          {actionLabel}
+          {tx(actionLabel)}
         </Button>
       </div>
 
@@ -522,11 +521,9 @@ function CodePracticePanel({
       {language === "html" ? (
         <div className="rounded-lg border border-border bg-background p-4">
           <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground">
-            <Monitor className="size-4" aria-hidden="true" />
-            Vorschau
-          </div>
+            <Monitor className="size-4" aria-hidden="true" /><Text message={"Vorschau"} />{" "}</div>
           <iframe
-            title="HTML Vorschau"
+            title={tx("HTML Vorschau")}
             sandbox=""
             srcDoc={codeValue}
             className="h-56 w-full rounded-lg border border-border bg-white"
@@ -537,7 +534,7 @@ function CodePracticePanel({
       <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4 text-neutral-100 shadow-sm">
         <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-neutral-300">
           <Terminal className="size-4" aria-hidden="true" />
-          {language === "python" ? "Terminal" : "Prüfung"}
+          {tx(language === "python" ? "Terminal" : "Prüfung")}
         </div>
         <pre
           className={cn(
@@ -545,7 +542,7 @@ function CodePracticePanel({
             runtimeError ? "text-red-200" : "text-emerald-100"
           )}
         >
-          {runtimeError ?? terminalOutput}
+          {runtimeError ? tx(runtimeError) : terminalOutput === emptyTerminal || terminalOutput === "(kein Text ausgegeben)" || terminalOutput === "Vorschau geprüft." ? tx(terminalOutput) : terminalOutput}
         </pre>
       </div>
     </div>

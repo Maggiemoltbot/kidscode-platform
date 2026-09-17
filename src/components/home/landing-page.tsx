@@ -1,5 +1,7 @@
 "use client";
 
+import { Text } from "@/components/i18n/language-provider";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Crown, Rocket, Sparkles } from "lucide-react";
@@ -31,6 +33,7 @@ const fadeInUp = {
 };
 
 export function LandingPage({ levels }: LandingPageProps) {
+  const t = useTranslations("levels");
   return (
     <div className="overflow-hidden">
       <section className="mx-auto grid min-h-[calc(100svh-8rem)] w-full max-w-6xl items-center gap-10 px-6 py-12 sm:px-8 md:grid-cols-[1.05fr_0.95fr] lg:px-10">
@@ -42,32 +45,23 @@ export function LandingPage({ levels }: LandingPageProps) {
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-            <Sparkles className="size-4" aria-hidden="true" />
-            Lernen, probieren, Punkte sammeln
-          </div>
+            <Sparkles className="size-4" aria-hidden="true" /><Text message={"Lernen, probieren, Punkte sammeln"} />{" "}</div>
           <div className="space-y-4">
             <h1 className="text-5xl font-semibold tracking-normal text-foreground sm:text-6xl lg:text-7xl">
               KidsCode
             </h1>
-            <p className="max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
-              Programmieren lernen wie ein Abenteuer: kurze Lektionen, direkte Übungen und
-              sichtbarer Fortschritt für junge Entdeckerinnen und Entdecker.
-            </p>
+            <p className="max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl"><Text message={"Programmieren lernen wie ein Abenteuer: kurze Lektionen, direkte Übungen und sichtbarer Fortschritt für junge Entdeckerinnen und Entdecker."} />{" "}</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
               href="/courses/beginner"
               className={cn(buttonVariants({ size: "lg" }), "h-12 bg-primary px-5 text-base shadow-sm")}
-            >
-              Jetzt starten!
-              <Rocket className="size-5" aria-hidden="true" />
+            ><Text message={"Jetzt starten!"} />{" "}<Rocket className="size-5" aria-hidden="true" />
             </Link>
             <Link
               href="/profile/new"
               className={cn(buttonVariants({ variant: "outline", size: "lg" }), "h-12 px-5 text-base")}
-            >
-              Profil anlegen
-            </Link>
+            ><Text message={"Profil anlegen"} />{" "}</Link>
           </div>
         </motion.div>
 
@@ -85,8 +79,8 @@ export function LandingPage({ levels }: LandingPageProps) {
 
       <section className="mx-auto w-full max-w-6xl px-6 pb-16 sm:px-8 lg:px-10">
         <div className="mb-7 flex flex-col gap-2">
-          <p className="text-sm font-semibold uppercase tracking-normal text-accent">Wähle dein Level</p>
-          <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">Dein nächstes Coding-Abenteuer</h2>
+          <p className="text-sm font-semibold uppercase tracking-normal text-accent"><Text message={"Wähle dein Level"} /></p>
+          <h2 className="text-3xl font-semibold text-foreground sm:text-4xl"><Text message={"Dein nächstes Coding-Abenteuer"} /></h2>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {levels.map((level, index) => {
@@ -114,16 +108,13 @@ export function LandingPage({ levels }: LandingPageProps) {
                       <Icon className="size-6" aria-hidden="true" />
                     </span>
                     <span className="rounded-full bg-background px-3 py-1 text-sm font-semibold text-muted-foreground">
-                      {level.lessonCount} Lektionen
-                    </span>
+                      {level.lessonCount}{" "}<Text message={"Lektionen"} />{" "}</span>
                   </div>
                   <div className="mt-7 space-y-3">
-                    <h3 className="text-2xl font-semibold text-foreground">{level.title}</h3>
-                    <p className="min-h-20 text-sm leading-6 text-muted-foreground">{level.description}</p>
+                    <h3 className="text-2xl font-semibold text-foreground">{t(`${level.slug}.title`)}</h3>
+                    <p className="min-h-20 text-sm leading-6 text-muted-foreground">{t(`${level.slug}.description`)}</p>
                   </div>
-                  <div className="mt-auto flex items-center gap-2 pt-6 text-sm font-semibold text-primary">
-                    Level öffnen
-                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  <div className="mt-auto flex items-center gap-2 pt-6 text-sm font-semibold text-primary"><Text message={"Level öffnen"} />{" "}<ArrowRight className="size-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                   </div>
                 </Link>
               </motion.div>

@@ -1,6 +1,8 @@
 "use client";
 
+import { Text, useLanguage } from "@/components/i18n/language-provider";
 import { useEffect, useState } from "react";
+import { localize } from "@/lib/localization";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { animate, motion } from "framer-motion";
@@ -39,7 +41,9 @@ type DashboardData = {
 
 export function ProfileDashboard() {
   const router = useRouter();
-  const [data, setData] = useState<DashboardData | null>(null);
+  const language = useLanguage();
+  const [source, setData] = useState<DashboardData | null>(null);
+  const data = localize(source, language);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -92,11 +96,9 @@ export function ProfileDashboard() {
   if (error || !data) {
     return (
       <main className="mx-auto w-full max-w-4xl px-6 py-16 text-center sm:px-8 lg:px-10">
-        <h1 className="text-3xl font-semibold">Profil nicht geladen</h1>
-        <p className="mt-3 text-muted-foreground">{error ?? "Bitte lege ein neues Profil an."}</p>
-        <Link href="/profile/new" className={cn(buttonVariants(), "mt-6 h-11 px-4")}>
-          Neues Profil
-        </Link>
+        <h1 className="text-3xl font-semibold"><Text message={"Profil nicht geladen"} /></h1>
+        <p className="mt-3 text-muted-foreground"><Text message={error ?? "Bitte lege ein neues Profil an."} /></p>
+        <Link href="/profile/new" className={cn(buttonVariants(), "mt-6 h-11 px-4")}><Text message={"Neues Profil"} />{" "}</Link>
       </main>
     );
   }
@@ -110,17 +112,13 @@ export function ProfileDashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
         >
-          <p className="text-sm font-semibold uppercase tracking-normal text-accent">Level-Up</p>
+          <p className="text-sm font-semibold uppercase tracking-normal text-accent"><Text message={"Level-Up"} /></p>
           <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-3xl font-semibold">Du bist jetzt auf Intermediate!</h2>
-              <p className="mt-2 max-w-2xl text-muted-foreground">
-                Alle Beginner-Übungen sind geschafft. Die nächsten Kurse sind freigeschaltet.
-              </p>
+              <h2 className="text-3xl font-semibold"><Text message={"Du bist jetzt auf Intermediate!"} /></h2>
+              <p className="mt-2 max-w-2xl text-muted-foreground"><Text message={"Alle Beginner-Übungen sind geschafft. Die nächsten Kurse sind freigeschaltet."} />{" "}</p>
             </div>
-            <Link href="/courses/intermediate" className={cn(buttonVariants({ size: "lg" }), "h-12 px-5 text-base")}>
-              Weiter zum Level
-              <ArrowRight className="size-5" aria-hidden="true" />
+            <Link href="/courses/intermediate" className={cn(buttonVariants({ size: "lg" }), "h-12 px-5 text-base")}><Text message={"Weiter zum Level"} />{" "}<ArrowRight className="size-5" aria-hidden="true" />
             </Link>
           </div>
         </motion.section>
@@ -133,9 +131,9 @@ export function ProfileDashboard() {
               {data.user.avatar}
             </div>
             <div>
-              <p className="text-sm font-semibold uppercase tracking-normal text-accent">Profil</p>
+              <p className="text-sm font-semibold uppercase tracking-normal text-accent"><Text message={"Profil"} /></p>
               <h1 className="text-4xl font-semibold">{data.user.username}</h1>
-              <p className="mt-2 text-muted-foreground">Bereit für die nächste Coding-Mission.</p>
+              <p className="mt-2 text-muted-foreground"><Text message={"Bereit für die nächste Coding-Mission."} /></p>
             </div>
           </div>
         </div>
@@ -150,7 +148,7 @@ export function ProfileDashboard() {
           </div>
           <div className="rounded-lg border border-accent/20 bg-accent/10 p-5">
             <Flame className="size-7 text-accent" aria-hidden="true" />
-            <p className="mt-4 text-sm font-semibold text-muted-foreground">Streak</p>
+            <p className="mt-4 text-sm font-semibold text-muted-foreground"><Text message={"Streak"} /></p>
             <p className="text-4xl font-semibold">
               <AnimatedNumber value={data.user.streak} />
             </p>
@@ -162,7 +160,7 @@ export function ProfileDashboard() {
         <div className="rounded-apple-xl bg-card p-6 shadow-sm">
           <div className="flex items-center gap-3">
             <BookOpen className="size-6 text-primary" aria-hidden="true" />
-            <h2 className="text-2xl font-semibold">Kursfortschritt</h2>
+            <h2 className="text-2xl font-semibold"><Text message={"Kursfortschritt"} /></h2>
           </div>
           <div className="mt-6 space-y-5">
             {data.courseProgress.map((course) => (
@@ -171,8 +169,7 @@ export function ProfileDashboard() {
                   <div>
                     <p className="font-semibold">{course.title}</p>
                     <p className="text-sm text-muted-foreground">
-                      {course.completed} von {course.total} Übungen erledigt
-                    </p>
+                      {course.completed}{" "}<Text message={"von"} />{" "}{course.total}{" "}<Text message={"Übungen erledigt"} />{" "}</p>
                   </div>
                   <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground">
                     {course.percent}%
@@ -192,19 +189,16 @@ export function ProfileDashboard() {
         <div className="rounded-apple-xl bg-card p-6 shadow-sm">
           <div className="flex items-center gap-3">
             <Award className="size-6 text-accent" aria-hidden="true" />
-            <h2 className="text-2xl font-semibold">Badges</h2>
+            <h2 className="text-2xl font-semibold"><Text message={"Badges"} /></h2>
           </div>
           {data.badges.length === 0 ? (
-            <p className="mt-6 rounded-md bg-muted p-4 text-sm font-bold text-muted-foreground">
-              Noch keine Badges. Die erste Auszeichnung wartet nach deiner ersten abgeschlossenen
-              Lektion.
-            </p>
+            <p className="mt-6 rounded-md bg-muted p-4 text-sm font-bold text-muted-foreground"><Text message={"Noch keine Badges. Die erste Auszeichnung wartet nach deiner ersten abgeschlossenen Lektion."} />{" "}</p>
           ) : (
             <div className="mt-6 grid grid-cols-2 gap-3">
               {data.badges.map((badge) => (
                 <div key={badge.id} className="rounded-md border border-border bg-background p-4">
                   <p className="text-3xl">{badge.icon}</p>
-                  <p className="mt-2 font-semibold">{badge.name}</p>
+                  <p className="mt-2 font-semibold"><Text message={badge.name} /></p>
                 </div>
               ))}
             </div>
@@ -213,9 +207,7 @@ export function ProfileDashboard() {
       </section>
 
       <div className="mt-8">
-        <Link href="/courses/beginner" className={cn(buttonVariants({ size: "lg" }), "h-12 px-5 text-base")}>
-          Weiterlernen
-        </Link>
+        <Link href="/courses/beginner" className={cn(buttonVariants({ size: "lg" }), "h-12 px-5 text-base")}><Text message={"Weiterlernen"} />{" "}</Link>
       </div>
     </main>
   );

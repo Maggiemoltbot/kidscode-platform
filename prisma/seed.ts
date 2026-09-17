@@ -1,5 +1,6 @@
 import { prisma } from "../src/lib/prisma";
 import { ExerciseType, Level, Prisma } from "@prisma/client";
+import { courseTranslations, lessonTranslations, exerciseTranslations } from "./translations";
 
 type SeedExercise = {
   id: string;
@@ -805,16 +806,33 @@ const courses: SeedCourse[] = [
 ];
 
 async function main() {
+  // Vollständigkeit vor dem ersten Schreibzugriff prüfen.
+  for (const course of courses) {
+    if (!courseTranslations[course.id]) throw new Error(`Kursübersetzung fehlt: ${course.id}`);
+    for (const lesson of course.lessons) {
+      if (!lessonTranslations[lesson.id]) throw new Error(`Lektionsübersetzung fehlt: ${lesson.id}`);
+      for (const exercise of lesson.exercises) {
+        const translation = exerciseTranslations[exercise.id];
+        if (!translation) throw new Error(`Übersetzung fehlt: ${exercise.id}`);
+        for (const language of ["en", "fr"] as const) {
+          const options = translation[`options_${language}`];
+          if (options && options.length !== exercise.options?.length) throw new Error(`Antwortzuordnung fehlerhaft: ${exercise.id}`);
+        }
+      }
+    }
+  }
   for (const course of courses) {
     await prisma.course.upsert({
       where: { id: course.id },
       update: {
+        ...courseTranslations[course.id],
         title: course.title,
         level: course.level,
         description: course.description,
         order: course.order,
       },
       create: {
+        ...courseTranslations[course.id],
         id: course.id,
         title: course.title,
         level: course.level,
@@ -827,6 +845,7 @@ async function main() {
       await prisma.lesson.upsert({
         where: { id: lesson.id },
         update: {
+          ...lessonTranslations[lesson.id],
           courseId: course.id,
           title: lesson.title,
           language: lesson.language,
@@ -834,6 +853,7 @@ async function main() {
           order: lesson.order,
         },
         create: {
+          ...lessonTranslations[lesson.id],
           id: lesson.id,
           courseId: course.id,
           title: lesson.title,
@@ -845,10 +865,13 @@ async function main() {
 
       for (const exercise of lesson.exercises) {
         const options = exercise.options === null ? Prisma.JsonNull : exercise.options;
+        const translated = exerciseTranslations[exercise.id];
+        const translation = { ...translated, options_en: translated.options_en ?? options, options_fr: translated.options_fr ?? options };
 
         await prisma.exercise.upsert({
           where: { id: exercise.id },
           update: {
+            ...translation,
             lessonId: lesson.id,
             type: exercise.type,
             question: exercise.question,
@@ -858,6 +881,7 @@ async function main() {
             xpReward: exercise.xpReward,
           },
           create: {
+            ...translation,
             id: exercise.id,
             lessonId: lesson.id,
             type: exercise.type,

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { levelConfigs, levelOrder, type LevelSlug } from "@/lib/level-config";
+import { translatedFields, type LocalizedFields } from "@/lib/localization";
 
 export type LevelSummary = {
   slug: LevelSlug;
@@ -9,7 +10,7 @@ export type LevelSummary = {
   courseCount: number;
 };
 
-export type LessonCardData = {
+export type LessonCardData = LocalizedFields & {
   id: string;
   title: string;
   language: string;
@@ -18,7 +19,7 @@ export type LessonCardData = {
   courseTitle: string;
 };
 
-export type CourseOverviewData = {
+export type CourseOverviewData = LocalizedFields & {
   id: string;
   title: string;
   description: string;
@@ -84,6 +85,7 @@ export async function getCoursesByLevel(slug: LevelSlug): Promise<CourseOverview
 
   return courses.map((course) => {
     const lessons = course.lessons.map((lesson) => ({
+      ...translatedFields(lesson),
       id: lesson.id,
       title: lesson.title,
       language: lesson.language,
@@ -93,6 +95,7 @@ export async function getCoursesByLevel(slug: LevelSlug): Promise<CourseOverview
     }));
 
     return {
+      ...translatedFields(course),
       id: course.id,
       title: course.title,
       description: course.description,

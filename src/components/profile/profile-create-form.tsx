@@ -1,5 +1,6 @@
 "use client";
 
+import { Text, useText } from "@/components/i18n/language-provider";
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -11,6 +12,7 @@ import { cn } from "@/lib/utils";
 const avatars = ["🤖", "🦊", "🐼", "🦄", "🐸", "🐻"];
 
 export function ProfileCreateForm() {
+  const tx = useText();
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState(avatars[0]);
@@ -56,38 +58,31 @@ export function ProfileCreateForm() {
     <main className="mx-auto grid w-full max-w-5xl gap-8 px-6 py-10 sm:px-8 md:grid-cols-[0.9fr_1.1fr] lg:px-10">
       <section className="space-y-5">
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
-          <Sparkles className="size-4" aria-hidden="true" />
-          Dein Startprofil
-        </div>
+          <Sparkles className="size-4" aria-hidden="true" /><Text message={"Dein Startprofil"} />{" "}</div>
         <div className="space-y-4">
-          <h1 className="text-4xl font-semibold sm:text-5xl">Wer lernt heute?</h1>
-          <p className="text-lg leading-8 text-muted-foreground">
-            Wähle einen Namen und einen Avatar. Es gibt kein Passwort, damit Kinder sofort starten
-            können.
-          </p>
+          <h1 className="text-4xl font-semibold sm:text-5xl"><Text message={"Wer lernt heute?"} /></h1>
+          <p className="text-lg leading-8 text-muted-foreground"><Text message={"Wähle einen Namen und einen Avatar. Es gibt kein Passwort, damit Kinder sofort starten können."} />{" "}</p>
         </div>
         {existingUserId ? (
-          <Link href="/profile" className={cn(buttonVariants({ variant: "outline" }), "h-11 px-4")}>
-            Vorhandenes Profil öffnen
-          </Link>
+          <Link href="/profile" className={cn(buttonVariants({ variant: "outline" }), "h-11 px-4")}><Text message={"Vorhandenes Profil öffnen"} />{" "}</Link>
         ) : null}
       </section>
 
       <form onSubmit={handleSubmit} className="rounded-apple-xl bg-card p-6 shadow-sm">
         <div className="space-y-6">
           <label className="block space-y-2">
-            <span className="text-sm font-semibold text-foreground">Name</span>
+            <span className="text-sm font-semibold text-foreground"><Text message={"Name"} /></span>
             <input
               value={username}
               onChange={(event) => setUsername(event.target.value)}
               maxLength={24}
-              placeholder="z. B. Mia"
+              placeholder={tx("z. B. Mia")}
               className="h-12 w-full rounded-lg border border-input bg-background px-4 text-base font-bold outline-none transition focus:border-primary focus:ring-3 focus:ring-primary/20"
             />
           </label>
 
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-foreground">Avatar</p>
+            <p className="text-sm font-semibold text-foreground"><Text message={"Avatar"} /></p>
             <div className="grid grid-cols-3 gap-3">
               {avatars.map((option) => (
                 <button
@@ -100,7 +95,7 @@ export function ProfileCreateForm() {
                       ? "border-primary bg-primary/10 ring-3 ring-primary/25"
                       : "border-border bg-background"
                   )}
-                  aria-label={`Avatar ${option} auswählen`}
+                  aria-label={tx("Avatar {avatar} auswählen", {avatar: option})}
                 >
                   {option}
                 </button>
@@ -110,14 +105,12 @@ export function ProfileCreateForm() {
 
           {error ? (
             <p className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm font-bold text-destructive">
-              {error}
+              <Text message={error} />
             </p>
           ) : null}
 
           <Button type="submit" size="lg" className="h-12 w-full text-base" disabled={isSubmitting}>
-            {isSubmitting ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : null}
-            Los geht&apos;s!
-            <ArrowRight className="size-5" aria-hidden="true" />
+            {isSubmitting ? <Loader2 className="size-5 animate-spin" aria-hidden="true" /> : null}<Text message={"Los geht's!"} />{" "}<ArrowRight className="size-5" aria-hidden="true" />
           </Button>
         </div>
       </form>
