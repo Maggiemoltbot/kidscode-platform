@@ -173,6 +173,10 @@
     "badge100": "100 XP club",
     "badgeStreak": "Keep going",
     "badgeError": "Bug explorer",
-    "badgeChampion": "Beginner champion"
+    "badgeChampion": "Beginner champion",
+    "selectAnswer": "Please choose one of the offered answers.",
+    "profileMissing": "Profile not found.",
+    "exerciseMissing": "Exercise not found.",
+    "missingAnswer": "Profile, exercise or answer is missing."
   }
 }

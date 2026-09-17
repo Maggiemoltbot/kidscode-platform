@@ -1,6 +1,7 @@
 import { prisma } from "../src/lib/prisma";
 import { ExerciseType, Level, Prisma } from "@prisma/client";
 import { courseTranslations, lessonTranslations, exerciseTranslations } from "./translations";
+import { shuffleArray } from "../src/lib/shuffle";
 
 type SeedExercise = {
   id: string;
@@ -864,9 +865,16 @@ async function main() {
       });
 
       for (const exercise of lesson.exercises) {
-        const options = exercise.options === null ? Prisma.JsonNull : exercise.options;
         const translated = exerciseTranslations[exercise.id];
-        const translation = { ...translated, options_en: translated.options_en ?? options, options_fr: translated.options_fr ?? options };
+        // Alle Sprachbeschriftungen gemeinsam mischen, die Lösung bleibt ein Wert.
+        const ordered = exercise.options === null ? null : shuffleArray(exercise.options.map((value, index) => ({
+          value, en: translated.options_en?.[index] ?? value, fr: translated.options_fr?.[index] ?? value,
+        })));
+        const options = ordered?.map((option) => option.value) ?? Prisma.JsonNull;
+        const translation = { ...translated,
+          options_en: ordered?.map((option) => option.en) ?? Prisma.JsonNull,
+          options_fr: ordered?.map((option) => option.fr) ?? Prisma.JsonNull,
+        };
 
         await prisma.exercise.upsert({
           where: { id: exercise.id },

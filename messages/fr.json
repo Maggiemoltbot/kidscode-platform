@@ -173,6 +173,10 @@
     "badge100": "Club des 100 XP",
     "badgeStreak": "Persévérance",
     "badgeError": "Explorateur d’erreurs",
-    "badgeChampion": "Champion débutant"
+    "badgeChampion": "Champion débutant",
+    "selectAnswer": "Choisis une des réponses proposées.",
+    "profileMissing": "Profil introuvable.",
+    "exerciseMissing": "Exercice introuvable.",
+    "missingAnswer": "Il manque le profil, l’exercice ou la réponse."
   }
 }

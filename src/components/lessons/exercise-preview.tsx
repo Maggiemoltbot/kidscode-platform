@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 import { TTSPlayer } from "@/components/tts/tts-player";
 import { SpeechSettings, useSpeechSettings } from "@/components/tts/speech-settings";
 import { feedback } from "@/lib/tts";
+import { shuffleArray } from "@/lib/shuffle";
 
 type ExercisePreviewProps = {
   level: LevelConfig;
@@ -98,6 +99,18 @@ export function ExercisePreview({ level, exercise: source }: ExercisePreviewProp
   const tx = useText();
   const exercise = localize(source, language);
   const optionLabels = language === "de" ? exercise.options : exercise[`options_${language}`];
+  const optionsKey = JSON.stringify(source.options);
+  const [optionOrder, setOptionOrder] = useState<{ id: string; key: string; indices: number[] } | null>(null);
+  useEffect(() => {
+    const options = JSON.parse(optionsKey) as string[];
+    setOptionOrder({ id: source.id, key: optionsKey, indices: shuffleArray(options.map((_, index) => index)) });
+  }, [source.id, optionsKey]);
+  // Erst nach Hydrierung mischen: Server und Browser erzeugen kein abweichendes HTML.
+  const optionsReady = optionOrder?.id === source.id && optionOrder.key === optionsKey;
+  const displayOptions = optionsReady ? optionOrder.indices.map((index) => ({
+    value: exercise.options[index],
+    label: optionLabels[index] ?? exercise.options[index],
+  })) : [];
   const speechSettings = useSpeechSettings();
   const [feedbackIndex, setFeedbackIndex] = useState(0);
   const router = useRouter();
@@ -334,7 +347,7 @@ export function ExercisePreview({ level, exercise: source }: ExercisePreviewProp
               {exercise.lesson.course.title} · {exercise.lesson.title}
             </p>
             <h1 className="text-4xl font-semibold text-foreground"><Text message={"Übung"} />{" "}{exercise.order}</h1>
-            <TTSPlayer text={exercise.question + (speechSettings.readOptions ? "\n\n" + optionLabels.join(".\n\n") : "")} language={language} autoplay={speechSettings.autoplay && !result} />
+            <TTSPlayer text={exercise.question + (speechSettings.readOptions && optionsReady ? "\n\n" + displayOptions.map((option) => option.label).join(".\n\n") : "")} language={language} autoplay={speechSettings.autoplay && !result && (!isMultipleChoice || optionsReady)} />
             <SpeechSettings language={language} settings={speechSettings} options={isMultipleChoice} />
           </div>
 
@@ -355,9 +368,11 @@ export function ExercisePreview({ level, exercise: source }: ExercisePreviewProp
               <p className="mt-2 text-sm text-muted-foreground"><Text message={"Dann können XP, Badges und Fortschritt gespeichert werden."} />{" "}</p>
               <Link href="/profile/new" className={cn(buttonVariants(), "mt-4 h-10 px-4")}><Text message={"Profil anlegen"} />{" "}</Link>
             </div>
+          ) : isMultipleChoice && !optionsReady ? (
+            <div className="mt-8 h-40 animate-pulse rounded-lg bg-muted" />
           ) : isMultipleChoice ? (
             <div className="mt-8 grid gap-3 sm:grid-cols-2">
-              {exercise.options.map((option, index) => {
+              {displayOptions.map(({ value: option, label }) => {
                 const isSelected = selectedAnswer === option;
                 const isCorrectSelection = result?.correct && isSelected;
                 const isWrongSelection = result && !result.correct && isSelected;
@@ -391,7 +406,7 @@ export function ExercisePreview({ level, exercise: source }: ExercisePreviewProp
                       ) : (
                         <CircleDot className="size-5 text-muted-foreground" aria-hidden="true" />
                       )}
-                      <span>{optionLabels[index] ?? option}</span>
+                      <span>{label}</span>
                     </span>
                   </motion.button>
                 );

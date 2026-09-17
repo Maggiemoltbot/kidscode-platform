@@ -173,6 +173,10 @@
     "badge100": "100 XP Club",
     "badgeStreak": "Dranbleiber",
     "badgeError": "Fehler-Forscher",
-    "badgeChampion": "Beginner Champion"
+    "badgeChampion": "Beginner Champion",
+    "selectAnswer": "Bitte wähle eine der angebotenen Antworten.",
+    "profileMissing": "Profil nicht gefunden.",
+    "exerciseMissing": "Übung nicht gefunden.",
+    "missingAnswer": "Profil, Übung oder Antwort fehlt."
   }
 }

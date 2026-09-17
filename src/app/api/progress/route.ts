@@ -7,6 +7,7 @@ import {
 } from "@/lib/gamification";
 import { prisma } from "@/lib/prisma";
 import { sortLessonExercises } from "@/lib/lesson-queries";
+import { isOfferedOption } from "@/lib/shuffle";
 
 export const dynamic = "force-dynamic";
 
@@ -72,6 +73,11 @@ export async function POST(request: Request) {
 
   if (!exercise) {
     return NextResponse.json({ error: "Übung nicht gefunden." }, { status: 404 });
+  }
+
+  // Niemals einen Anzeigeindex oder eine übersetzte Beschriftung als Lösung werten.
+  if (exercise.type === "MULTIPLE_CHOICE" && !isOfferedOption(exercise.options, answer)) {
+    return NextResponse.json({ error: "Bitte wähle eine der angebotenen Antworten." }, { status: 400 });
   }
 
   const isCorrect = isExerciseAnswerCorrect(exercise.type, answer, exercise.correctAnswer);
