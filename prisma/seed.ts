@@ -3,6 +3,7 @@ import { ExerciseType, Level, Prisma } from "@prisma/client";
 import { courseTranslations, lessonTranslations, exerciseTranslations } from "./translations";
 import { shuffleArray } from "../src/lib/shuffle";
 import { conceptTypeByLesson } from "../src/lib/concepts";
+import { getAnnotatedSampleCode, getAnnotatedStarterCode } from "../src/lib/lesson-code";
 
 type SeedExercise = {
   id: string;
@@ -849,6 +850,7 @@ async function main() {
         update: {
           ...lessonTranslations[lesson.id],
           conceptType: conceptTypeByLesson[lesson.id] ?? null,
+          sampleCode: getAnnotatedSampleCode(lesson.id, lesson.language),
           courseId: course.id,
           title: lesson.title,
           language: lesson.language,
@@ -858,6 +860,7 @@ async function main() {
         create: {
           ...lessonTranslations[lesson.id],
           conceptType: conceptTypeByLesson[lesson.id] ?? null,
+          sampleCode: getAnnotatedSampleCode(lesson.id, lesson.language),
           id: lesson.id,
           courseId: course.id,
           title: lesson.title,
@@ -883,6 +886,7 @@ async function main() {
           where: { id: exercise.id },
           update: {
             ...translation,
+            starterCode: getAnnotatedStarterCode(exercise.id, exercise.type, lesson.language),
             lessonId: lesson.id,
             type: exercise.type,
             question: exercise.question,
@@ -893,6 +897,7 @@ async function main() {
           },
           create: {
             ...translation,
+            starterCode: getAnnotatedStarterCode(exercise.id, exercise.type, lesson.language),
             id: exercise.id,
             lessonId: lesson.id,
             type: exercise.type,

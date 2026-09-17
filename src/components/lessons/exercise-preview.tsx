@@ -23,6 +23,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { CodeEditor } from "@/components/editor/code-editor";
+import { filterComments } from "@/lib/code-comments";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { PROFILE_STORAGE_KEY } from "@/lib/storage-keys";
 import { type ExercisePreviewData } from "@/lib/lesson-queries";
@@ -121,7 +122,7 @@ export function ExercisePreview({ level, exercise: source }: ExercisePreviewProp
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
-  const [codeValue, setCodeValue] = useState(exercise.starterCode);
+  const [codeValue, setCodeValue] = useState(() => filterComments(exercise.starterCode, false));
   const [terminalOutput, setTerminalOutput] = useState(emptyTerminal);
   const [runtimeError, setRuntimeError] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(false);
@@ -145,7 +146,7 @@ export function ExercisePreview({ level, exercise: source }: ExercisePreviewProp
     setResult(null);
     setError(null);
     setShowCompletion(false);
-    setCodeValue(exercise.starterCode);
+    setCodeValue(filterComments(exercise.starterCode, false));
     setTerminalOutput(emptyTerminal);
     setRuntimeError(null);
     setIsRunning(false);
@@ -512,7 +513,7 @@ function CodePracticePanel({
   const actionLabel = language === "python" ? "Ausführen" : "Prüfen";
 
   return (
-    <div className="mt-8 grid gap-5">
+    <div className="mt-8 grid min-w-0 grid-cols-1 gap-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <span className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -531,7 +532,7 @@ function CodePracticePanel({
         </Button>
       </div>
 
-      <CodeEditor language={language} value={codeValue} onChange={onCodeChange} readOnly={Boolean(result?.correct)} />
+      <CodeEditor key={exercise.id} language={language} value={codeValue} annotatedCode={exercise.starterCode} onChange={onCodeChange} readOnly={Boolean(result?.correct)} />
 
       {language === "html" ? (
         <div className="rounded-lg border border-border bg-background p-4">

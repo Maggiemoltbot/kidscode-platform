@@ -3,6 +3,8 @@
 import { Text, useLanguage } from "@/components/i18n/language-provider";
 import { TTSPlayer } from "@/components/tts/tts-player";
 import { ConceptSection } from "@/components/lessons/concept-visual";
+import { CommentToggle, useCommentToggle } from "@/components/editor/comment-toggle";
+import { filterComments } from "@/lib/code-comments";
 import { SpeechSettings, useSpeechSettings } from "@/components/tts/speech-settings";
 
 import Link from "next/link";
@@ -32,21 +34,25 @@ const languageLabels: Record<string, string> = {
 };
 
 function TheoryCodeBlock({ code, language }: { code: string; language: string }) {
+  const comments = useCommentToggle();
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-[#181321] shadow-sm">
-      <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-        <div className="flex items-center gap-2">
-          <span className="size-3 rounded-full bg-[#F97316]" />
-          <span className="size-3 rounded-full bg-[#FBBF24]" />
-          <span className="size-3 rounded-full bg-[#22C55E]" />
+    <div className="space-y-2">
+      <CommentToggle {...comments} language={language} />
+      <div className="overflow-hidden rounded-lg border border-border bg-[#181321] shadow-sm">
+        <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+          <div className="flex items-center gap-2">
+            <span className="size-3 rounded-full bg-[#F97316]" />
+            <span className="size-3 rounded-full bg-[#FBBF24]" />
+            <span className="size-3 rounded-full bg-[#22C55E]" />
+          </div>
+          <span className="text-xs font-semibold uppercase tracking-normal text-white/60">
+            {languageLabels[language] ?? language}
+          </span>
         </div>
-        <span className="text-xs font-semibold uppercase tracking-normal text-white/60">
-          {languageLabels[language] ?? language}
-        </span>
+        <pre className="overflow-x-auto p-5 text-sm leading-7 text-violet-100 sm:text-base">
+          <code>{filterComments(code, comments.showComments, language)}</code>
+        </pre>
       </div>
-      <pre className="overflow-x-auto p-5 text-sm leading-7 text-violet-100 sm:text-base">
-        <code>{code}</code>
-      </pre>
     </div>
   );
 }
@@ -109,7 +115,7 @@ export function LessonTheoryView({ level, lesson: source }: LessonTheoryViewProp
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         <motion.main
-          className="space-y-6"
+          className="min-w-0 space-y-6"
           variants={fadeInUp}
           initial="hidden"
           animate="visible"

@@ -53,6 +53,7 @@ model Lesson {
   language  String
   theory    String
   conceptType String?
+  sampleCode String?
   title_en  String?
   title_fr  String?
   theory_en String?
@@ -71,6 +72,7 @@ model Exercise {
   question      String
   options       Json?
   correctAnswer String
+  starterCode   String?
   hint          String
   question_en   String?
   question_fr   String?

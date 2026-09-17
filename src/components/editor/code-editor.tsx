@@ -4,10 +4,13 @@ import { useEffect, useRef } from "react";
 import { html } from "@codemirror/lang-html";
 import { python } from "@codemirror/lang-python";
 import { basicSetup, EditorView } from "codemirror";
+import { learningComments, showLearningComments } from "@/lib/editor-comments";
+import { CommentToggle, useCommentToggle } from "./comment-toggle";
 
 type CodeEditorProps = {
   language: "python" | "html";
   value: string;
+  annotatedCode?: string;
   onChange: (value: string) => void;
   readOnly?: boolean;
 };
@@ -40,9 +43,19 @@ const editorTheme = EditorView.theme({
   "&.cm-focused": {
     outline: "none",
   },
+  ".cm-learning-comment": {
+    color: "var(--muted-foreground)",
+    padding: "2px 0",
+    whiteSpace: "pre-wrap",
+    fontStyle: "italic",
+    fontSize: "13px",
+  },
 });
 
-export function CodeEditor({ language, value, onChange, readOnly = false }: CodeEditorProps) {
+export function CodeEditor({ language, value, annotatedCode = "", onChange, readOnly = false }: CodeEditorProps) {
+  const comments = useCommentToggle();
+  const commentsShown = useRef(comments.showComments);
+  commentsShown.current = comments.showComments;
   const containerRef = useRef<HTMLDivElement | null>(null);
   const editorRef = useRef<EditorView | null>(null);
   const onChangeRef = useRef(onChange);
@@ -69,6 +82,7 @@ export function CodeEditor({ language, value, onChange, readOnly = false }: Code
         EditorView.lineWrapping,
         EditorView.editable.of(!readOnly),
         editorTheme,
+        learningComments(annotatedCode, language, commentsShown.current),
         EditorView.updateListener.of((update) => {
           if (update.docChanged) {
             onChangeRef.current(update.state.doc.toString());
@@ -84,7 +98,11 @@ export function CodeEditor({ language, value, onChange, readOnly = false }: Code
       editor.destroy();
       editorRef.current = null;
     };
-  }, [language, readOnly]);
+  }, [language, readOnly, annotatedCode]);
+
+  useEffect(() => {
+    editorRef.current?.dispatch({ effects: showLearningComments.of(comments.showComments) });
+  }, [comments.showComments]);
 
   useEffect(() => {
     const editor = editorRef.current;
@@ -107,9 +125,12 @@ export function CodeEditor({ language, value, onChange, readOnly = false }: Code
   }, [value]);
 
   return (
-    <div
-      ref={containerRef}
-      className="overflow-hidden rounded-lg border border-border bg-background shadow-inner"
-    />
+    <div className="space-y-2">
+      <CommentToggle {...comments} language={language} editor />
+      <div
+        ref={containerRef}
+        className="overflow-hidden rounded-lg border border-border bg-background shadow-inner"
+      />
+    </div>
   );
 }
