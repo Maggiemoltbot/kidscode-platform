@@ -1,6 +1,6 @@
 export type Language = "de" | "en" | "fr";
 export type WordTiming = { word: string; start: number; end: number };
-export type TTSResponse = { audio_base64: string; word_timings: WordTiming[] };
+export type TTSResponse = { audio_base64: string; word_timings: WordTiming[]; playback_rate?: number };
 export type Alignment = {
   characters: string[];
   character_start_times_seconds: number[];
@@ -9,6 +9,27 @@ export type Alignment = {
 
 export function isLanguage(value: unknown): value is Language {
   return value === "de" || value === "en" || value === "fr";
+}
+
+// Vom Anbieter zurückgegebene SSML-Zeichen haben keine sichtbare Wortposition.
+export function withoutLanguageTags(alignment?: Alignment): Alignment | undefined {
+  if (!alignment) return undefined;
+  const text = alignment.characters.join("");
+  const hidden = new Set<number>();
+  for (const match of text.matchAll(/<lang xml:lang="en-US">|<\/lang>/g)) {
+    for (let i = match.index!; i < match.index! + match[0].length; i++) hidden.add(i);
+  }
+  let offset = 0;
+  const keep = alignment.characters.map((character) => {
+    const visible = !hidden.has(offset);
+    offset += character.length;
+    return visible;
+  });
+  return {
+    characters: alignment.characters.filter((_, i) => keep[i]),
+    character_start_times_seconds: alignment.character_start_times_seconds.filter((_, i) => keep[i]),
+    character_end_times_seconds: alignment.character_end_times_seconds.filter((_, i) => keep[i]),
+  };
 }
 
 // Nur Originaltext ausrichten: normalisierte Zahlen könnten andere Wörter erzeugen.

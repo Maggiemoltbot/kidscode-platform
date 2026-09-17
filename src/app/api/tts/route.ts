@@ -1,7 +1,9 @@
 import { createHash, randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, stat, writeFile } from "node:fs/promises";
 import { NextRequest, NextResponse } from "next/server";
-import { isLanguage, wordsFromAlignment, type Alignment, type TTSResponse } from "@/lib/tts";
+import { isLanguage, wordsFromAlignment, withoutLanguageTags, type Alignment, type TTSResponse } from "@/lib/tts";
+import { preprocessTTSText } from "@/lib/tts-preprocessor";
+import { isTTSSpeed, isTTSVoice, TTS_VOICES, ttsPlaybackSettings } from "@/lib/tts-settings";
 
 export const runtime = "nodejs";
 const pending = new Map<string, Promise<TTSResponse>>();
@@ -33,15 +35,20 @@ export async function POST(request: NextRequest) {
     raw += decoder.decode(chunk.value, { stream: true });
   }
   raw += decoder.decode();
-  let body: { text?: unknown; language?: unknown };
+  let body: { text?: unknown; language?: unknown; speed?: unknown; voice?: unknown };
   try { body = JSON.parse(raw); } catch { return NextResponse.json({ error: "body" }, { status: 400 }); }
   if (!body || typeof body.text !== "string" || !body.text.trim() || body.text.length > 3000 || !isLanguage(body.language)) {
     return NextResponse.json({ error: "input" }, { status: 400 });
   }
   const { text, language } = body;
-  const voice = language === "de" ? "ThT5KcBeYPX3keUQqHPh" : "EXAVITQu4vr4xnSDxMaL";
-  const model = language === "de" ? "eleven_multilingual_v2" : "eleven_flash_v2_5";
-  const key = createHash("sha256").update(JSON.stringify([2, text, language, voice, model])).digest("hex");
+  const speed = body.speed ?? 1;
+  const selectedVoice = body.voice ?? "jessica";
+  if (!isTTSSpeed(speed) || !isTTSVoice(selectedVoice)) return NextResponse.json({ error: "settings" }, { status: 400 });
+  const voice = TTS_VOICES[selectedVoice].id;
+  const model = "eleven_multilingual_v2";
+  const processedText = preprocessTTSText(text, language);
+  const { synthesisSpeed, playbackRate } = ttsPlaybackSettings(speed);
+  const key = createHash("sha256").update(JSON.stringify([3, processedText, text, language, speed, voice, model])).digest("hex");
   const file = `${cacheDirectory}/${key}.json`;
   try {
     if (Date.now() - (await stat(file)).mtimeMs < 7 * 86_400_000) {
@@ -59,13 +66,13 @@ export async function POST(request: NextRequest) {
         const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice}/with-timestamps`, {
           method: "POST",
           headers: { "xi-api-key": process.env.ELEVENLABS_API_KEY!, "Content-Type": "application/json" },
-          body: JSON.stringify({ text, model_id: model, ...(language === "de" ? {} : { language_code: language }) }),
+          body: JSON.stringify({ text: processedText, model_id: model, voice_settings: { stability: 0.5, similarity_boost: 0.8, speed: synthesisSpeed } }),
           signal: AbortSignal.timeout(20_000),
         });
         if (!response.ok) throw new Error("TTS nicht verfügbar");
         const data = await response.json() as { audio_base64?: string; alignment?: Alignment };
         if (!data.audio_base64) throw new Error("Audio fehlt");
-        const result = { audio_base64: data.audio_base64, word_timings: wordsFromAlignment(text, data.alignment) };
+        const result = { audio_base64: data.audio_base64, word_timings: wordsFromAlignment(text, withoutLanguageTags(data.alignment)), playback_rate: playbackRate };
         try {
           await mkdir(cacheDirectory, { recursive: true, mode: 0o700 });
           const temporary = `${file}.${randomUUID()}.tmp`;
