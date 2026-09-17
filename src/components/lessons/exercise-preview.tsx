@@ -57,13 +57,13 @@ type CodeLanguage = "python" | "html";
 
 const emptyTerminal = "Noch keine Ausgabe.";
 
-const confettiParticles = Array.from({ length: 24 }, (_, index) => {
-  const angle = (index / 24) * Math.PI * 2;
+const confettiParticles = Array.from({ length: 20 }, (_, index) => {
+  const angle = (index / 20) * Math.PI * 2;
   const distance = 72 + (index % 5) * 12;
 
   return {
     id: index,
-    color: ["#7C3AED", "#F97316", "#22C55E", "#FBBF24"][index % 4],
+    color: ["#007AFF", "#AF52DE", "#FF9500", "#34C759", "#FFCC00"][index % 5],
     x: Math.cos(angle) * distance,
     y: Math.sin(angle) * distance,
     rotate: index * 37,
@@ -243,19 +243,19 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
     return (
       <div className="mx-auto grid min-h-[calc(100svh-8rem)] w-full max-w-4xl place-items-center px-6 py-10 sm:px-8 lg:px-10">
         <motion.section
-          className="relative w-full overflow-hidden rounded-lg border border-primary/20 bg-card p-8 text-center shadow-xl shadow-primary/10"
+          className="relative w-full overflow-hidden rounded-lg border border-primary/20 bg-card p-8 text-center shadow-sm"
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
         >
           <ConfettiBurst />
           <div className="mx-auto flex size-20 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <Trophy className="size-10" aria-hidden="true" />
           </div>
-          <p className="mt-6 text-sm font-black uppercase tracking-normal text-accent">Lektion abgeschlossen</p>
-          <h1 className="mt-2 text-4xl font-black sm:text-5xl">{exercise.lesson.title}</h1>
+          <p className="mt-6 text-sm font-semibold uppercase tracking-normal text-accent">Lektion abgeschlossen</p>
+          <h1 className="mt-2 text-4xl font-semibold sm:text-5xl">{exercise.lesson.title}</h1>
           <motion.p
-            className="mt-5 text-3xl font-black text-primary"
+            className="mt-5 text-3xl font-semibold text-primary"
             initial={{ scale: 0.75, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 180, damping: 12, delay: 0.2 }}
@@ -267,7 +267,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
               {awardedBadges.map((badge) => (
                 <div key={badge.name} className="rounded-lg bg-accent/10 p-5">
                   <p className="text-4xl">{badge.icon}</p>
-                  <p className="mt-2 text-xl font-black">{badge.name}</p>
+                  <p className="mt-2 text-xl font-semibold">{badge.name}</p>
                 </div>
               ))}
             </div>
@@ -296,7 +296,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
       <div className="mb-8">
         <Link
           href={`/courses/${level.slug}/${exercise.lesson.id}`}
-          className="inline-flex items-center gap-2 text-sm font-black text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           Zurück zur Theorie
@@ -305,35 +305,35 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
 
       <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
         <motion.main
-          className="relative overflow-hidden rounded-lg border border-border bg-card p-6 shadow-sm sm:p-8"
+          className="relative overflow-hidden rounded-apple-xl bg-card p-6 shadow-sm sm:p-8"
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
         >
           {result?.correct ? <ConfettiBurst /> : null}
 
           <div className="flex flex-wrap items-center gap-3">
-            <span className={cn("inline-flex rounded-full bg-gradient-to-r px-4 py-2 text-sm font-black", level.accentClass)}>
+            <span className={cn("inline-flex rounded-full bg-gradient-to-r px-4 py-2 text-sm font-semibold", level.accentClass)}>
               {level.title}
             </span>
-            <span className="inline-flex rounded-full bg-muted px-4 py-2 text-sm font-black text-muted-foreground">
+            <span className="inline-flex rounded-full bg-muted px-4 py-2 text-sm font-semibold text-muted-foreground">
               {getExerciseTypeLabel(exercise.type)}
             </span>
           </div>
 
           <div className="mt-7 space-y-3">
-            <p className="text-sm font-black uppercase tracking-normal text-accent">
+            <p className="text-sm font-semibold uppercase tracking-normal text-accent">
               {exercise.lesson.course.title} · {exercise.lesson.title}
             </p>
-            <h1 className="text-4xl font-black text-foreground">Übung {exercise.order}</h1>
+            <h1 className="text-4xl font-semibold text-foreground">Übung {exercise.order}</h1>
             <p className="text-lg leading-8 text-muted-foreground">{exercise.question}</p>
           </div>
 
-          <div className="mt-6 h-3 overflow-hidden rounded-full bg-muted">
+          <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label="Fortschritt">
             <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
-              initial={{ width: `${Math.max(progressPercent - 12, 0)}%` }}
-              animate={{ width: `${progressPercent}%` }}
+              className="h-full origin-left rounded-full bg-primary"
+              initial={{ scaleX: Math.max(progressPercent - 12, 0) / 100 }}
+              animate={{ scaleX: progressPercent / 100 }}
               transition={{ duration: 0.35, ease: "easeOut" }}
             />
           </div>
@@ -342,7 +342,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
             <div className="mt-8 h-40 animate-pulse rounded-lg bg-muted" />
           ) : !userId ? (
             <div className="mt-8 rounded-lg bg-muted p-5">
-              <p className="font-black">Lege zuerst ein Profil an.</p>
+              <p className="font-semibold">Lege zuerst ein Profil an.</p>
               <p className="mt-2 text-sm text-muted-foreground">
                 Dann können XP, Badges und Fortschritt gespeichert werden.
               </p>
@@ -363,16 +363,17 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
                     key={option}
                     type="button"
                     className={cn(
-                      "min-h-24 rounded-lg border border-border bg-background p-4 text-left text-base font-black shadow-sm transition disabled:cursor-default sm:text-lg",
-                      "hover:border-primary/40 hover:shadow-md",
+                      "min-h-24 rounded-apple border border-border bg-card p-4 text-left text-base font-semibold transition disabled:cursor-default sm:text-lg",
+                      "hover:border-primary hover:bg-primary/5",
                       isCorrectSelection &&
-                        "border-emerald-400 bg-emerald-50 text-emerald-900 shadow-[0_0_28px_rgba(34,197,94,0.35)] dark:bg-emerald-950/40 dark:text-emerald-100",
-                      isWrongSelection && "border-red-400 bg-red-50 text-red-900 dark:bg-red-950/40 dark:text-red-100",
+                        "border-apple-green bg-apple-green/10 text-emerald-700 dark:text-apple-green",
+                      isWrongSelection && "border-apple-red bg-apple-red/10 text-red-700 dark:text-apple-red",
                       isCorrectAnswer &&
-                        "border-emerald-400 bg-emerald-50 text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-100"
+                        "border-apple-green bg-apple-green/10 text-emerald-700 dark:text-apple-green"
                     )}
                     disabled={Boolean(result) || isSubmitting}
                     aria-pressed={isSelected}
+                    whileTap={{ scale: 0.96 }}
                     animate={isWrongSelection ? { x: [0, -8, 8, -6, 6, 0] } : undefined}
                     transition={{ duration: 0.35 }}
                     onClick={() => void submitAnswer(option)}
@@ -405,7 +406,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
             />
           ) : (
             <div className="mt-8 rounded-lg bg-muted p-5">
-              <p className="font-black">Dieser Übungstyp ist noch nicht verfügbar.</p>
+              <p className="font-semibold">Dieser Übungstyp ist noch nicht verfügbar.</p>
             </div>
           )}
 
@@ -423,7 +424,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
             >
-              <p className="text-xl font-black">{result.correct ? "Richtig!" : "Fast. Versuch es nochmal!"}</p>
+              <p className="text-xl font-semibold">{result.correct ? "Richtig!" : "Fast. Versuch es nochmal!"}</p>
               <p className="mt-2 text-sm font-bold">
                 {result.correct
                   ? result.alreadyCompleted
@@ -442,20 +443,20 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
         </motion.main>
 
         <aside className="space-y-4">
-          <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+          <div className="rounded-apple-xl bg-card p-5 shadow-sm">
             <Sparkles className="size-7 text-primary" aria-hidden="true" />
-            <p className="mt-4 text-sm font-black text-muted-foreground">Belohnung</p>
-            <p className="text-3xl font-black">{exercise.xpReward} XP</p>
+            <p className="mt-4 text-sm font-semibold text-muted-foreground">Belohnung</p>
+            <p className="text-3xl font-semibold">{exercise.xpReward} XP</p>
           </div>
-          <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+          <div className="rounded-apple-xl bg-card p-5 shadow-sm">
             <BadgeCheck className="size-7 text-accent" aria-hidden="true" />
-            <p className="mt-4 text-sm font-black text-muted-foreground">Fortschritt</p>
-            <p className="text-3xl font-black">
+            <p className="mt-4 text-sm font-semibold text-muted-foreground">Fortschritt</p>
+            <p className="text-3xl font-semibold">
               {result?.completedCount ?? Math.max(exercise.order - 1, 0)} / {exercise.totalExercises}
             </p>
           </div>
-          <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
-            <p className="text-sm font-black text-primary">Tipp</p>
+          <div className="rounded-apple-xl bg-card p-5 shadow-sm">
+            <p className="text-sm font-semibold text-primary">Tipp</p>
             <p className="mt-2 leading-7 text-muted-foreground">{exercise.hint}</p>
           </div>
         </aside>
@@ -497,10 +498,10 @@ function CodePracticePanel({
             <Code2 className="size-6" aria-hidden="true" />
           </span>
           <div>
-            <p className="text-sm font-black uppercase tracking-normal text-muted-foreground">
+            <p className="text-sm font-semibold uppercase tracking-normal text-muted-foreground">
               {language === "python" ? "Python Editor" : "HTML Editor"}
             </p>
-            <p className="font-black">{exercise.type === "CODE_GAP" ? "Lücke füllen" : "Eigener Code"}</p>
+            <p className="font-semibold">{exercise.type === "CODE_GAP" ? "Lücke füllen" : "Eigener Code"}</p>
           </div>
         </div>
         <Button className="h-11 px-5 text-base" disabled={isBusy || Boolean(result)} onClick={onRunCode}>
@@ -513,7 +514,7 @@ function CodePracticePanel({
 
       {language === "html" ? (
         <div className="rounded-lg border border-border bg-background p-4">
-          <div className="mb-3 flex items-center gap-2 text-sm font-black text-muted-foreground">
+          <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-muted-foreground">
             <Monitor className="size-4" aria-hidden="true" />
             Vorschau
           </div>
@@ -527,7 +528,7 @@ function CodePracticePanel({
       ) : null}
 
       <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4 text-neutral-100 shadow-sm">
-        <div className="mb-3 flex items-center gap-2 text-sm font-black text-neutral-300">
+        <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-neutral-300">
           <Terminal className="size-4" aria-hidden="true" />
           {language === "python" ? "Terminal" : "Prüfung"}
         </div>

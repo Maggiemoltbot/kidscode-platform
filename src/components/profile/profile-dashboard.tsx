@@ -92,7 +92,7 @@ export function ProfileDashboard() {
   if (error || !data) {
     return (
       <main className="mx-auto w-full max-w-4xl px-6 py-16 text-center sm:px-8 lg:px-10">
-        <h1 className="text-3xl font-black">Profil nicht geladen</h1>
+        <h1 className="text-3xl font-semibold">Profil nicht geladen</h1>
         <p className="mt-3 text-muted-foreground">{error ?? "Bitte lege ein neues Profil an."}</p>
         <Link href="/profile/new" className={cn(buttonVariants(), "mt-6 h-11 px-4")}>
           Neues Profil
@@ -108,12 +108,12 @@ export function ProfileDashboard() {
           className="mb-8 overflow-hidden rounded-lg border border-primary/20 bg-gradient-to-r from-primary/15 via-accent/10 to-emerald-400/15 p-6 shadow-sm"
           initial={{ opacity: 0, y: -14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
         >
-          <p className="text-sm font-black uppercase tracking-normal text-accent">Level-Up</p>
+          <p className="text-sm font-semibold uppercase tracking-normal text-accent">Level-Up</p>
           <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-3xl font-black">Du bist jetzt auf Intermediate!</h2>
+              <h2 className="text-3xl font-semibold">Du bist jetzt auf Intermediate!</h2>
               <p className="mt-2 max-w-2xl text-muted-foreground">
                 Alle Beginner-Übungen sind geschafft. Die nächsten Kurse sind freigeschaltet.
               </p>
@@ -127,14 +127,14 @@ export function ProfileDashboard() {
       ) : null}
 
       <section className="grid gap-4 md:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <div className="rounded-apple-xl bg-card p-6 shadow-sm">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
             <div className="flex size-24 items-center justify-center rounded-lg bg-primary/10 text-6xl">
               {data.user.avatar}
             </div>
             <div>
-              <p className="text-sm font-black uppercase tracking-normal text-accent">Profil</p>
-              <h1 className="text-4xl font-black">{data.user.username}</h1>
+              <p className="text-sm font-semibold uppercase tracking-normal text-accent">Profil</p>
+              <h1 className="text-4xl font-semibold">{data.user.username}</h1>
               <p className="mt-2 text-muted-foreground">Bereit für die nächste Coding-Mission.</p>
             </div>
           </div>
@@ -143,15 +143,15 @@ export function ProfileDashboard() {
         <div className="grid gap-4 min-[420px]:grid-cols-2">
           <div className="rounded-lg border border-primary/20 bg-primary/10 p-5">
             <Trophy className="size-7 text-primary" aria-hidden="true" />
-            <p className="mt-4 text-sm font-black text-muted-foreground">XP</p>
-            <p className="text-4xl font-black">
+            <p className="mt-4 text-sm font-semibold text-muted-foreground">XP</p>
+            <p className="text-4xl font-semibold">
               <AnimatedNumber value={data.user.xp} />
             </p>
           </div>
           <div className="rounded-lg border border-accent/20 bg-accent/10 p-5">
             <Flame className="size-7 text-accent" aria-hidden="true" />
-            <p className="mt-4 text-sm font-black text-muted-foreground">Streak</p>
-            <p className="text-4xl font-black">
+            <p className="mt-4 text-sm font-semibold text-muted-foreground">Streak</p>
+            <p className="text-4xl font-semibold">
               <AnimatedNumber value={data.user.streak} />
             </p>
           </div>
@@ -159,22 +159,22 @@ export function ProfileDashboard() {
       </section>
 
       <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.8fr]">
-        <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <div className="rounded-apple-xl bg-card p-6 shadow-sm">
           <div className="flex items-center gap-3">
             <BookOpen className="size-6 text-primary" aria-hidden="true" />
-            <h2 className="text-2xl font-black">Kursfortschritt</h2>
+            <h2 className="text-2xl font-semibold">Kursfortschritt</h2>
           </div>
           <div className="mt-6 space-y-5">
             {data.courseProgress.map((course) => (
               <div key={course.id} className="space-y-2">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <p className="font-black">{course.title}</p>
+                    <p className="font-semibold">{course.title}</p>
                     <p className="text-sm text-muted-foreground">
                       {course.completed} von {course.total} Übungen erledigt
                     </p>
                   </div>
-                  <span className="rounded-full bg-secondary px-3 py-1 text-xs font-black text-secondary-foreground">
+                  <span className="rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-secondary-foreground">
                     {course.percent}%
                   </span>
                 </div>
@@ -189,10 +189,10 @@ export function ProfileDashboard() {
           </div>
         </div>
 
-        <div className="rounded-lg border border-border bg-card p-6 shadow-sm">
+        <div className="rounded-apple-xl bg-card p-6 shadow-sm">
           <div className="flex items-center gap-3">
             <Award className="size-6 text-accent" aria-hidden="true" />
-            <h2 className="text-2xl font-black">Badges</h2>
+            <h2 className="text-2xl font-semibold">Badges</h2>
           </div>
           {data.badges.length === 0 ? (
             <p className="mt-6 rounded-md bg-muted p-4 text-sm font-bold text-muted-foreground">
@@ -204,7 +204,7 @@ export function ProfileDashboard() {
               {data.badges.map((badge) => (
                 <div key={badge.id} className="rounded-md border border-border bg-background p-4">
                   <p className="text-3xl">{badge.icon}</p>
-                  <p className="mt-2 font-black">{badge.name}</p>
+                  <p className="mt-2 font-semibold">{badge.name}</p>
                 </div>
               ))}
             </div>

@@ -34,11 +34,11 @@ export default async function LeaderboardPage() {
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-8 sm:py-10 lg:px-10">
-      <section className="rounded-lg border border-border bg-card p-5 shadow-sm sm:p-7">
+      <section className="rounded-apple-xl bg-card p-5 shadow-sm sm:p-7">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-sm font-black uppercase tracking-normal text-accent">Top 10</p>
-            <h1 className="mt-2 text-3xl font-black sm:text-5xl">Rangliste</h1>
+            <p className="text-sm font-semibold uppercase tracking-normal text-accent">Top 10</p>
+            <h1 className="mt-2 text-3xl font-semibold sm:text-5xl">Rangliste</h1>
             <p className="mt-3 max-w-2xl text-muted-foreground">
               Die fleissigsten KidsCode-Profile nach gesammelten XP.
             </p>
@@ -49,11 +49,11 @@ export default async function LeaderboardPage() {
         </div>
       </section>
 
-      <section className="mt-6 overflow-hidden rounded-lg border border-border bg-card shadow-sm">
+      <section className="mt-6 overflow-hidden rounded-apple-xl bg-card shadow-sm">
         {users.length === 0 ? (
           <div className="p-8 text-center">
             <Trophy className="mx-auto size-10 text-muted-foreground" aria-hidden="true" />
-            <h2 className="mt-4 text-2xl font-black">Noch keine Profile</h2>
+            <h2 className="mt-4 text-2xl font-semibold">Noch keine Profile</h2>
             <p className="mt-2 text-muted-foreground">Sobald Kinder Übungen lösen, erscheint hier die Rangliste.</p>
           </div>
         ) : (
@@ -71,14 +71,14 @@ export default async function LeaderboardPage() {
                   </div>
                   <div className="flex size-12 items-center justify-center rounded-lg bg-muted text-3xl">{user.avatar}</div>
                   <div className="min-w-0">
-                    <h2 className="truncate text-lg font-black">{user.username}</h2>
+                    <h2 className="truncate text-lg font-semibold">{user.username}</h2>
                     <p className="text-sm font-bold text-muted-foreground">
                       {user.badges.length} Badges · {user.streak} Tage Streak
                     </p>
                   </div>
                   <div className="col-span-2 rounded-md bg-primary/10 px-4 py-3 text-right sm:col-span-1">
-                    <p className="text-xs font-black uppercase tracking-normal text-primary">XP</p>
-                    <p className="text-2xl font-black">{user.xp}</p>
+                    <p className="text-xs font-semibold uppercase tracking-normal text-primary">XP</p>
+                    <p className="text-2xl font-semibold">{user.xp}</p>
                   </div>
                 </article>
               );
@@ -91,7 +91,7 @@ export default async function LeaderboardPage() {
 }
 
 function getRankClassName(rank: number) {
-  const base = "flex size-10 items-center justify-center rounded-lg text-sm font-black";
+  const base = "flex size-10 items-center justify-center rounded-lg text-sm font-semibold";
 
   if (rank === 1) {
     return `${base} bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-200`;

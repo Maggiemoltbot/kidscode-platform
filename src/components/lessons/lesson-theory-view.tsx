@@ -33,7 +33,7 @@ function TheoryCodeBlock({ code, language }: { code: string; language: string })
           <span className="size-3 rounded-full bg-[#FBBF24]" />
           <span className="size-3 rounded-full bg-[#22C55E]" />
         </div>
-        <span className="text-xs font-black uppercase tracking-normal text-white/60">
+        <span className="text-xs font-semibold uppercase tracking-normal text-white/60">
           {languageLabels[language] ?? language}
         </span>
       </div>
@@ -68,24 +68,24 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
         variants={fadeInUp}
         initial="hidden"
         animate="visible"
-        transition={{ duration: 0.45, ease: "easeOut" }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       >
         <div className="flex flex-wrap items-center gap-3">
-          <span className={cn("inline-flex rounded-full bg-gradient-to-r px-4 py-2 text-sm font-black", level.accentClass)}>
+          <span className={cn("inline-flex rounded-full bg-gradient-to-r px-4 py-2 text-sm font-semibold", level.accentClass)}>
             {level.title}
           </span>
-          <span className="inline-flex rounded-full bg-muted px-4 py-2 text-sm font-black text-muted-foreground">
+          <span className="inline-flex rounded-full bg-muted px-4 py-2 text-sm font-semibold text-muted-foreground">
             Lektion {lesson.order} · {lesson.language}
           </span>
         </div>
         <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
           <div>
-            <p className="text-sm font-black uppercase tracking-normal text-accent">{lesson.course.title}</p>
-            <h1 className="mt-2 text-4xl font-black text-foreground sm:text-5xl">{lesson.title}</h1>
+            <p className="text-sm font-semibold uppercase tracking-normal text-accent">{lesson.course.title}</p>
+            <h1 className="mt-2 text-4xl font-semibold text-foreground sm:text-5xl">{lesson.title}</h1>
           </div>
-          <div className="rounded-lg border border-border bg-card p-4 shadow-sm md:min-w-56">
-            <p className="text-sm font-black text-muted-foreground">Nächster Schritt</p>
-            <p className="mt-1 text-2xl font-black">Übung 1 von {exerciseCount}</p>
+          <div className="rounded-apple-xl bg-card p-4 shadow-sm md:min-w-56">
+            <p className="text-sm font-semibold text-muted-foreground">Nächster Schritt</p>
+            <p className="mt-1 text-2xl font-semibold">Übung 1 von {exerciseCount}</p>
           </div>
         </div>
       </motion.header>
@@ -107,39 +107,39 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
           animate="visible"
           transition={{ duration: 0.5, delay: 0.08, ease: "easeOut" }}
         >
-          <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
+          <section className="rounded-apple-xl bg-card p-6 shadow-sm">
             <div className="mb-5 flex items-center gap-3">
               <span className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <BookOpen className="size-5" aria-hidden="true" />
               </span>
               <div>
-                <p className="text-sm font-black uppercase tracking-normal text-accent">Theorie</p>
-                <h2 className="text-2xl font-black">Kurz erklärt</h2>
+                <p className="text-sm font-semibold uppercase tracking-normal text-accent">Theorie</p>
+                <h2 className="text-2xl font-semibold">Kurz erklärt</h2>
               </div>
             </div>
             <p className="text-lg leading-8 text-muted-foreground">{lesson.theory}</p>
           </section>
 
-          <section className="space-y-4 rounded-lg border border-border bg-card p-6 shadow-sm">
+          <section className="space-y-4 rounded-apple-xl bg-card p-6 shadow-sm">
             <div className="flex items-center gap-3">
               <span className="flex size-11 items-center justify-center rounded-lg bg-accent/10 text-accent">
                 <Lightbulb className="size-5" aria-hidden="true" />
               </span>
               <div>
-                <p className="text-sm font-black uppercase tracking-normal text-accent">Beispiel</p>
-                <h2 className="text-2xl font-black">So sieht der Code aus</h2>
+                <p className="text-sm font-semibold uppercase tracking-normal text-accent">Beispiel</p>
+                <h2 className="text-2xl font-semibold">So sieht der Code aus</h2>
               </div>
             </div>
             <TheoryCodeBlock code={lesson.sampleCode} language={lesson.language} />
           </section>
 
-          <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
+          <section className="rounded-apple-xl bg-card p-6 shadow-sm">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm font-black uppercase tracking-normal text-muted-foreground">
+                <p className="text-sm font-semibold uppercase tracking-normal text-muted-foreground">
                   {exerciseCount} Übungen warten
                 </p>
-                <h2 className="text-2xl font-black">Bereit zum Ausprobieren?</h2>
+                <h2 className="text-2xl font-semibold">Bereit zum Ausprobieren?</h2>
               </div>
               {firstExercise ? (
                 <Link
@@ -168,24 +168,24 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.16, ease: "easeOut" }}
         >
-          <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
+          <div className="rounded-apple-xl bg-card p-5 shadow-sm">
             <div className="relative rounded-lg bg-gradient-to-br from-primary/10 to-accent/15 p-4">
               <RobotMascot className="mx-auto max-w-[210px]" />
             </div>
-            <div className="mt-4 rounded-lg bg-muted p-4">
-              <p className="text-sm font-black text-primary">Robo sagt:</p>
+            <div className="mt-4 rounded-apple-xl border border-white/50 bg-white/80 p-5 shadow-sm backdrop-blur-xl dark:bg-white/5">
+              <p className="text-sm font-semibold text-primary">Robo sagt:</p>
               <p className="mt-2 leading-7 text-muted-foreground">{lesson.mascotMessage}</p>
             </div>
           </div>
 
-          <div className="rounded-lg border border-border bg-card p-5 shadow-sm">
-            <p className="text-sm font-black uppercase tracking-normal text-muted-foreground">In dieser Lektion</p>
+          <div className="rounded-apple-xl bg-card p-5 shadow-sm">
+            <p className="text-sm font-semibold uppercase tracking-normal text-muted-foreground">In dieser Lektion</p>
             <div className="mt-4 space-y-3">
               {lesson.exercises.map((exercise) => (
                 <div key={exercise.id} className="flex items-center gap-3 rounded-md bg-muted p-3">
                   <CheckCircle2 className="size-5 text-primary" aria-hidden="true" />
                   <div>
-                    <p className="text-sm font-black">Übung {exercise.order}</p>
+                    <p className="text-sm font-semibold">Übung {exercise.order}</p>
                     <p className="text-xs font-bold text-muted-foreground">{exercise.xpReward} XP</p>
                   </div>
                 </div>

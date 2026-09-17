@@ -10,9 +10,9 @@ const navItems = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-gray-200/50 bg-white/70 backdrop-blur-xl dark:border-white/10 dark:bg-[#1C1C1E]/70">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-8 lg:px-10">
-        <Link href="/" className="flex items-center gap-3 font-black text-foreground">
+        <Link href="/" className="flex items-center gap-3 font-semibold text-foreground">
           <span className="flex size-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Code2 className="size-5" aria-hidden="true" />
           </span>

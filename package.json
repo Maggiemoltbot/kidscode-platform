@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "NEXT_BUILD_DIR=.next-build next build",
     "typecheck": "tsc --noEmit",
-    "start": "next start",
+    "start": "NEXT_BUILD_DIR=.next-build next start",
     "lint": "eslint",
     "db:seed": "tsx prisma/seed.ts"
   },

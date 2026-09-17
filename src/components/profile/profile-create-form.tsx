@@ -55,12 +55,12 @@ export function ProfileCreateForm() {
   return (
     <main className="mx-auto grid w-full max-w-5xl gap-8 px-6 py-10 sm:px-8 md:grid-cols-[0.9fr_1.1fr] lg:px-10">
       <section className="space-y-5">
-        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-black text-primary">
+        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
           <Sparkles className="size-4" aria-hidden="true" />
           Dein Startprofil
         </div>
         <div className="space-y-4">
-          <h1 className="text-4xl font-black sm:text-5xl">Wer lernt heute?</h1>
+          <h1 className="text-4xl font-semibold sm:text-5xl">Wer lernt heute?</h1>
           <p className="text-lg leading-8 text-muted-foreground">
             Wähle einen Namen und einen Avatar. Es gibt kein Passwort, damit Kinder sofort starten
             können.
@@ -73,10 +73,10 @@ export function ProfileCreateForm() {
         ) : null}
       </section>
 
-      <form onSubmit={handleSubmit} className="rounded-lg border border-border bg-card p-6 shadow-sm">
+      <form onSubmit={handleSubmit} className="rounded-apple-xl bg-card p-6 shadow-sm">
         <div className="space-y-6">
           <label className="block space-y-2">
-            <span className="text-sm font-black text-foreground">Name</span>
+            <span className="text-sm font-semibold text-foreground">Name</span>
             <input
               value={username}
               onChange={(event) => setUsername(event.target.value)}
@@ -87,7 +87,7 @@ export function ProfileCreateForm() {
           </label>
 
           <div className="space-y-3">
-            <p className="text-sm font-black text-foreground">Avatar</p>
+            <p className="text-sm font-semibold text-foreground">Avatar</p>
             <div className="grid grid-cols-3 gap-3">
               {avatars.map((option) => (
                 <button

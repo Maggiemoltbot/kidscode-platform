@@ -80,24 +80,24 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
         <span className="text-foreground">{level.title}</span>
       </nav>
 
-      <header className="grid gap-6 rounded-lg border border-border bg-card p-5 shadow-sm sm:p-6 md:grid-cols-[1fr_auto] md:items-end">
+      <header className="grid gap-6 rounded-apple-xl bg-card p-5 shadow-sm sm:p-6 md:grid-cols-[1fr_auto] md:items-end">
         <div className="space-y-4">
-          <div className={cn("inline-flex rounded-full bg-gradient-to-r px-4 py-2 text-sm font-black", level.accentClass)}>
+          <div className={cn("inline-flex rounded-full bg-gradient-to-r px-4 py-2 text-sm font-semibold", level.accentClass)}>
             {level.title}
           </div>
           <div className="space-y-3">
-            <h1 className="text-3xl font-black text-foreground sm:text-5xl">{level.title}-Kurse</h1>
+            <h1 className="text-3xl font-semibold text-foreground sm:text-5xl">{level.title}-Kurse</h1>
             <p className="max-w-2xl text-base leading-7 text-muted-foreground">{level.description}</p>
           </div>
         </div>
         <div className="grid gap-3 min-[420px]:grid-cols-2 sm:min-w-64">
           <div className="rounded-md bg-muted p-4">
             <p className="text-sm font-bold text-muted-foreground">Lektionen</p>
-            <p className="mt-1 text-3xl font-black">{totalLessons}</p>
+            <p className="mt-1 text-3xl font-semibold">{totalLessons}</p>
           </div>
           <div className="rounded-md bg-muted p-4">
             <p className="text-sm font-bold text-muted-foreground">Übungen</p>
-            <p className="mt-1 text-3xl font-black">{totalExercises}</p>
+            <p className="mt-1 text-3xl font-semibold">{totalExercises}</p>
           </div>
         </div>
       </header>
@@ -112,7 +112,7 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
             transition={{ duration: 0.4, ease: "easeOut" }}
           >
             <BookOpen className="mx-auto size-10 text-muted-foreground" aria-hidden="true" />
-            <h2 className="mt-4 text-2xl font-black">Noch keine Kurse in diesem Level</h2>
+            <h2 className="mt-4 text-2xl font-semibold">Noch keine Kurse in diesem Level</h2>
             <p className="mt-2 text-muted-foreground">Die Inhalte werden in M8 vollständig aufgefüllt.</p>
           </motion.div>
         ) : (
@@ -126,17 +126,17 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
                 variants={fadeInUp}
                 initial="hidden"
                 animate="visible"
-                transition={{ duration: 0.45, delay: courseIndex * 0.08, ease: "easeOut" }}
+                transition={{ duration: 0.3, delay: courseIndex * 0.08, ease: "easeOut" }}
               >
                 <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
                   <div>
-                    <p className="text-sm font-black uppercase tracking-normal text-accent">
+                    <p className="text-sm font-semibold uppercase tracking-normal text-accent">
                       {course.lessonCount} Lektionen
                     </p>
-                    <h2 className="text-2xl font-black sm:text-3xl">{course.title}</h2>
+                    <h2 className="text-2xl font-semibold sm:text-3xl">{course.title}</h2>
                     <p className="mt-2 max-w-2xl text-muted-foreground">{course.description}</p>
                   </div>
-                  <span className="w-fit rounded-full bg-primary/10 px-4 py-2 text-sm font-black text-primary">
+                  <span className="w-fit rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
                     {courseProgress?.completed ?? 0} / {course.exerciseCount} erledigt
                   </span>
                 </div>
@@ -163,7 +163,7 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
                       >
                         <Link
                           href={`/courses/${level.slug}/${lesson.id}`}
-                          className="group flex h-full min-h-48 flex-col rounded-lg border border-border bg-card p-5 shadow-sm transition-shadow hover:shadow-lg"
+                          className="group flex h-full min-h-48 flex-col rounded-apple-xl bg-card p-5 shadow-sm transition-shadow hover:shadow-lg"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-secondary text-secondary-foreground">
@@ -171,7 +171,7 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
                             </span>
                             <span
                               className={cn(
-                                "rounded-full px-3 py-1 text-xs font-black",
+                                "rounded-full px-3 py-1 text-xs font-semibold",
                                 lessonProgress?.percent === 100
                                   ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-200"
                                   : "bg-accent/15 text-accent"
@@ -181,10 +181,10 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
                             </span>
                           </div>
                           <div className="mt-5 space-y-2">
-                            <p className="text-xs font-black uppercase tracking-normal text-muted-foreground">
+                            <p className="text-xs font-semibold uppercase tracking-normal text-muted-foreground">
                               Lektion {lesson.order} · {lesson.language}
                             </p>
-                            <h3 className="text-xl font-black text-foreground">{lesson.title}</h3>
+                            <h3 className="text-xl font-semibold text-foreground">{lesson.title}</h3>
                             <p className="text-sm text-muted-foreground">
                               {lessonProgress?.completed ?? 0} von {lesson.exerciseCount} Übungen
                             </p>
@@ -196,7 +196,7 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
                                 style={{ width: `${lessonProgress?.percent ?? 0}%` }}
                               />
                             </div>
-                            <div className="mt-4 flex items-center gap-2 text-sm font-black text-primary">
+                            <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-primary">
                               Lektion starten
                               <ArrowRight
                                 className="size-4 transition-transform group-hover:translate-x-1"
