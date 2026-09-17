@@ -1,5 +1,8 @@
 "use client";
 
+import { TTSPlayer } from "@/components/tts/tts-player";
+import { SpeechSettings, useSpeechSettings } from "@/components/tts/speech-settings";
+
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, CheckCircle2, ChevronRight, Home, Lightbulb, Play } from "lucide-react";
@@ -45,6 +48,7 @@ function TheoryCodeBlock({ code, language }: { code: string; language: string })
 }
 
 export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
+  const speechSettings = useSpeechSettings();
   const firstExercise = lesson.exercises[0];
   const exerciseCount = lesson.exercises.length;
 
@@ -117,7 +121,8 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
                 <h2 className="text-2xl font-semibold">Kurz erklärt</h2>
               </div>
             </div>
-            <p className="text-lg leading-8 text-muted-foreground">{lesson.theory}</p>
+            <TTSPlayer text={lesson.theory} language="de" autoplay={speechSettings.autoplay} />
+            <SpeechSettings language="de" settings={speechSettings} />
           </section>
 
           <section className="space-y-4 rounded-apple-xl bg-card p-6 shadow-sm">

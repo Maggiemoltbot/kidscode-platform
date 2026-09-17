@@ -26,6 +26,9 @@ import { type ExercisePreviewData } from "@/lib/lesson-queries";
 import { runPythonCode } from "@/lib/pyodide-loader";
 import { type LevelConfig } from "@/lib/level-config";
 import { cn } from "@/lib/utils";
+import { TTSPlayer } from "@/components/tts/tts-player";
+import { SpeechSettings, useSpeechSettings } from "@/components/tts/speech-settings";
+import { feedback } from "@/lib/tts";
 
 type ExercisePreviewProps = {
   level: LevelConfig;
@@ -87,6 +90,8 @@ function getEditorLanguage(language: string): CodeLanguage {
 }
 
 export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
+  const speechSettings = useSpeechSettings();
+  const [feedbackIndex, setFeedbackIndex] = useState(0);
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [hasCheckedProfile, setHasCheckedProfile] = useState(false);
@@ -157,6 +162,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
       }
 
       const progressResult = payload as ProgressResult;
+      setFeedbackIndex(Math.floor(Math.random() * 4));
       setResult(progressResult);
       return progressResult;
     } catch {
@@ -326,7 +332,8 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
               {exercise.lesson.course.title} · {exercise.lesson.title}
             </p>
             <h1 className="text-4xl font-semibold text-foreground">Übung {exercise.order}</h1>
-            <p className="text-lg leading-8 text-muted-foreground">{exercise.question}</p>
+            <TTSPlayer text={exercise.question + (speechSettings.readOptions ? "\n\n" + exercise.options.join(".\n\n") : "")} language="de" autoplay={speechSettings.autoplay && !result} />
+            <SpeechSettings language="de" settings={speechSettings} options={isMultipleChoice} />
           </div>
 
           <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label="Fortschritt">
@@ -424,7 +431,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, ease: "easeOut" }}
             >
-              <p className="text-xl font-semibold">{result.correct ? "Richtig!" : "Fast. Versuch es nochmal!"}</p>
+              <TTSPlayer text={feedback.de[result.correct ? "correct" : "incorrect"][feedbackIndex]} language="de" autoplay={speechSettings.autoplay} size="sm" />
               <p className="mt-2 text-sm font-bold">
                 {result.correct
                   ? result.alreadyCompleted
