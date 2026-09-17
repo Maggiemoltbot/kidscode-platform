@@ -114,7 +114,7 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
               </span>
               <div>
                 <p className="text-sm font-black uppercase tracking-normal text-accent">Theorie</p>
-                <h2 className="text-2xl font-black">Kurz erklaert</h2>
+                <h2 className="text-2xl font-black">Kurz erklärt</h2>
               </div>
             </div>
             <p className="text-lg leading-8 text-muted-foreground">{lesson.theory}</p>
