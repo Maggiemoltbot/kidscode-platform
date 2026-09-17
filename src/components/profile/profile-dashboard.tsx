@@ -115,7 +115,7 @@ export function ProfileDashboard() {
             <div>
               <h2 className="text-3xl font-black">Du bist jetzt auf Intermediate!</h2>
               <p className="mt-2 max-w-2xl text-muted-foreground">
-                Alle Beginner-Uebungen sind geschafft. Die naechsten Kurse sind freigeschaltet.
+                Alle Beginner-Übungen sind geschafft. Die nächsten Kurse sind freigeschaltet.
               </p>
             </div>
             <Link href="/courses/intermediate" className={cn(buttonVariants({ size: "lg" }), "h-12 px-5 text-base")}>
@@ -135,7 +135,7 @@ export function ProfileDashboard() {
             <div>
               <p className="text-sm font-black uppercase tracking-normal text-accent">Profil</p>
               <h1 className="text-4xl font-black">{data.user.username}</h1>
-              <p className="mt-2 text-muted-foreground">Bereit fuer die naechste Coding-Mission.</p>
+              <p className="mt-2 text-muted-foreground">Bereit für die nächste Coding-Mission.</p>
             </div>
           </div>
         </div>
@@ -171,7 +171,7 @@ export function ProfileDashboard() {
                   <div>
                     <p className="font-black">{course.title}</p>
                     <p className="text-sm text-muted-foreground">
-                      {course.completed} von {course.total} Uebungen erledigt
+                      {course.completed} von {course.total} Übungen erledigt
                     </p>
                   </div>
                   <span className="rounded-full bg-secondary px-3 py-1 text-xs font-black text-secondary-foreground">

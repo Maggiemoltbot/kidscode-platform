@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: ExercisePageProps) {
 
   if (!level) {
     return {
-      title: "Uebung nicht gefunden | KidsCode",
+      title: "Übung nicht gefunden | KidsCode",
     };
   }
 
@@ -26,12 +26,12 @@ export async function generateMetadata({ params }: ExercisePageProps) {
 
   if (!exercise) {
     return {
-      title: "Uebung nicht gefunden | KidsCode",
+      title: "Übung nicht gefunden | KidsCode",
     };
   }
 
   return {
-    title: `${exercise.lesson.title}: Uebung | KidsCode`,
+    title: `${exercise.lesson.title}: Übung | KidsCode`,
     description: exercise.question,
   };
 }

@@ -14,7 +14,7 @@ export async function POST(request: Request) {
 
   if (username.length < 2 || username.length > 24) {
     return NextResponse.json(
-      { error: "Bitte waehle einen Namen mit 2 bis 24 Zeichen." },
+      { error: "Bitte wähle einen Namen mit 2 bis 24 Zeichen." },
       { status: 400 }
     );
   }

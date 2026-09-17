@@ -54,7 +54,7 @@ const sampleCodeByLesson: Record<string, string> = {
   "lesson-intermediate-schleifen": 'for i in range(4):\n    print("Rakete startet!")',
   "lesson-intermediate-funktionen":
     'def begruessen(name):\n    print("Hallo " + name)\n\nbegruessen("Byte")',
-  "lesson-intermediate-listen": 'farben = ["rot", "blau", "gruen"]\nprint(farben[2])',
+  "lesson-intermediate-listen": 'farben = ["rot", "blau", "grün"]\nprint(farben[2])',
   "lesson-intermediate-css":
     "<style>\n  h1 { color: purple; }\n  .karte { background: orange; padding: 16px; }\n</style>\n<h1>Meine Seite</h1>\n<div class=\"karte\">Hallo!</div>",
   "lesson-intermediate-js-intro":
@@ -87,7 +87,7 @@ const starterCodeByExercise: Record<string, string> = {
   "exercise-intermediate-funktionen-gap-1":
     'def begruessen(name):\n    print("Hallo " + name)\n\nbegruessen("____")',
   "exercise-intermediate-funktionen-free-1": "def zeige_zahl():\n    print(3 + 3)\n\nzeige_zahl()",
-  "exercise-intermediate-listen-gap-1": 'farben = ["rot", "blau", "gruen"]\nprint(farben[____])',
+  "exercise-intermediate-listen-gap-1": 'farben = ["rot", "blau", "grün"]\nprint(farben[____])',
   "exercise-intermediate-listen-free-1": 'tiere = ["Katze", "Hund", "Fisch"]\nprint(tiere[1])',
   "exercise-intermediate-css-gap-1":
     "<style>\n  h1 { color: ____; }\n</style>\n<h1>Meine Seite</h1>",
@@ -166,7 +166,7 @@ function getMascotMessage(language: string, title: string) {
     return `${title} zeigt Code ganz nah am Computer. Achte besonders auf Klammern, Semikolons und klare Reihenfolge.`;
   }
 
-  return `${title} ist ein kleiner Befehl fuer den Computer. Lies den Code laut, dann erkennst du oft schon, was passiert.`;
+  return `${title} ist ein kleiner Befehl für den Computer. Lies den Code laut, dann erkennst du oft schon, was passiert.`;
 }
 
 export async function getLessonByLevel(levelSlug: LevelSlug, lessonId: string): Promise<LessonDetailData | null> {

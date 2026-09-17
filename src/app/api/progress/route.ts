@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   const answer = typeof body?.answer === "string" ? body.answer : "";
 
   if (!userId || !exerciseId || !answer) {
-    return NextResponse.json({ error: "Profil, Uebung oder Antwort fehlt." }, { status: 400 });
+    return NextResponse.json({ error: "Profil, Übung oder Antwort fehlt." }, { status: 400 });
   }
 
   const [user, exercise] = await Promise.all([
@@ -71,7 +71,7 @@ export async function POST(request: Request) {
   }
 
   if (!exercise) {
-    return NextResponse.json({ error: "Uebung nicht gefunden." }, { status: 404 });
+    return NextResponse.json({ error: "Übung nicht gefunden." }, { status: 404 });
   }
 
   const isCorrect = isExerciseAnswerCorrect(exercise.type, answer, exercise.correctAnswer);

@@ -54,7 +54,7 @@ export default async function LeaderboardPage() {
           <div className="p-8 text-center">
             <Trophy className="mx-auto size-10 text-muted-foreground" aria-hidden="true" />
             <h2 className="mt-4 text-2xl font-black">Noch keine Profile</h2>
-            <p className="mt-2 text-muted-foreground">Sobald Kinder Uebungen loesen, erscheint hier die Rangliste.</p>
+            <p className="mt-2 text-muted-foreground">Sobald Kinder Übungen lösen, erscheint hier die Rangliste.</p>
           </div>
         ) : (
           <div className="divide-y divide-border">

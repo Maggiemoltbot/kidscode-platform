@@ -96,7 +96,7 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
             <p className="mt-1 text-3xl font-black">{totalLessons}</p>
           </div>
           <div className="rounded-md bg-muted p-4">
-            <p className="text-sm font-bold text-muted-foreground">Uebungen</p>
+            <p className="text-sm font-bold text-muted-foreground">Übungen</p>
             <p className="mt-1 text-3xl font-black">{totalExercises}</p>
           </div>
         </div>
@@ -113,7 +113,7 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
           >
             <BookOpen className="mx-auto size-10 text-muted-foreground" aria-hidden="true" />
             <h2 className="mt-4 text-2xl font-black">Noch keine Kurse in diesem Level</h2>
-            <p className="mt-2 text-muted-foreground">Die Inhalte werden in M8 vollstaendig aufgefuellt.</p>
+            <p className="mt-2 text-muted-foreground">Die Inhalte werden in M8 vollständig aufgefüllt.</p>
           </motion.div>
         ) : (
           courses.map((course, courseIndex) => {
@@ -186,7 +186,7 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
                             </p>
                             <h3 className="text-xl font-black text-foreground">{lesson.title}</h3>
                             <p className="text-sm text-muted-foreground">
-                              {lessonProgress?.completed ?? 0} von {lesson.exerciseCount} Uebungen
+                              {lessonProgress?.completed ?? 0} von {lesson.exerciseCount} Übungen
                             </p>
                           </div>
                           <div className="mt-auto pt-5">
@@ -217,7 +217,7 @@ export function CourseLevelView({ level, courses }: CourseLevelViewProps) {
 
       <div className="mt-10">
         <Link href="/" className={cn(buttonVariants({ variant: "outline" }), "h-10 px-4")}>
-          Zurueck zur Level-Auswahl
+          Zurück zur Level-Auswahl
         </Link>
       </div>
     </div>

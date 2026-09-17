@@ -50,8 +50,8 @@ export function LandingPage({ levels }: LandingPageProps) {
               KidsCode
             </h1>
             <p className="max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
-              Programmieren lernen wie ein Abenteuer: kurze Lektionen, direkte Uebungen und
-              sichtbarer Fortschritt fuer junge Entdeckerinnen und Entdecker.
+              Programmieren lernen wie ein Abenteuer: kurze Lektionen, direkte Übungen und
+              sichtbarer Fortschritt für junge Entdeckerinnen und Entdecker.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -85,8 +85,8 @@ export function LandingPage({ levels }: LandingPageProps) {
 
       <section className="mx-auto w-full max-w-6xl px-6 pb-16 sm:px-8 lg:px-10">
         <div className="mb-7 flex flex-col gap-2">
-          <p className="text-sm font-black uppercase tracking-normal text-accent">Waehle dein Level</p>
-          <h2 className="text-3xl font-black text-foreground sm:text-4xl">Dein naechstes Coding-Abenteuer</h2>
+          <p className="text-sm font-black uppercase tracking-normal text-accent">Wähle dein Level</p>
+          <h2 className="text-3xl font-black text-foreground sm:text-4xl">Dein nächstes Coding-Abenteuer</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {levels.map((level, index) => {
@@ -122,7 +122,7 @@ export function LandingPage({ levels }: LandingPageProps) {
                     <p className="min-h-20 text-sm leading-6 text-muted-foreground">{level.description}</p>
                   </div>
                   <div className="mt-auto flex items-center gap-2 pt-6 text-sm font-black text-primary">
-                    Level oeffnen
+                    Level öffnen
                     <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                   </div>
                 </Link>

@@ -62,13 +62,13 @@ export function ProfileCreateForm() {
         <div className="space-y-4">
           <h1 className="text-4xl font-black sm:text-5xl">Wer lernt heute?</h1>
           <p className="text-lg leading-8 text-muted-foreground">
-            Waehle einen Namen und einen Avatar. Es gibt kein Passwort, damit Kinder sofort starten
-            koennen.
+            Wähle einen Namen und einen Avatar. Es gibt kein Passwort, damit Kinder sofort starten
+            können.
           </p>
         </div>
         {existingUserId ? (
           <Link href="/profile" className={cn(buttonVariants({ variant: "outline" }), "h-11 px-4")}>
-            Vorhandenes Profil oeffnen
+            Vorhandenes Profil öffnen
           </Link>
         ) : null}
       </section>
@@ -100,7 +100,7 @@ export function ProfileCreateForm() {
                       ? "border-primary bg-primary/10 ring-3 ring-primary/25"
                       : "border-border bg-background"
                   )}
-                  aria-label={`Avatar ${option} auswaehlen`}
+                  aria-label={`Avatar ${option} auswählen`}
                 >
                   {option}
                 </button>

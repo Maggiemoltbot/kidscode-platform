@@ -84,8 +84,8 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
             <h1 className="mt-2 text-4xl font-black text-foreground sm:text-5xl">{lesson.title}</h1>
           </div>
           <div className="rounded-lg border border-border bg-card p-4 shadow-sm md:min-w-56">
-            <p className="text-sm font-black text-muted-foreground">Naechster Schritt</p>
-            <p className="mt-1 text-2xl font-black">Uebung 1 von {exerciseCount}</p>
+            <p className="text-sm font-black text-muted-foreground">Nächster Schritt</p>
+            <p className="mt-1 text-2xl font-black">Übung 1 von {exerciseCount}</p>
           </div>
         </div>
       </motion.header>
@@ -137,7 +137,7 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-black uppercase tracking-normal text-muted-foreground">
-                  {exerciseCount} Uebungen warten
+                  {exerciseCount} Übungen warten
                 </p>
                 <h2 className="text-2xl font-black">Bereit zum Ausprobieren?</h2>
               </div>
@@ -146,7 +146,7 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
                   href={`/courses/${level.slug}/${lesson.id}/exercise/${firstExercise.id}`}
                   className={cn(buttonVariants({ size: "lg" }), "h-12 px-5 text-base")}
                 >
-                  Zur Uebung!
+                  Zur Übung!
                   <Play className="size-5" aria-hidden="true" />
                 </Link>
               ) : (
@@ -154,7 +154,7 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
                   href={`/courses/${level.slug}`}
                   className={cn(buttonVariants({ variant: "outline", size: "lg" }), "h-12 px-5 text-base")}
                 >
-                  Zur Kursuebersicht
+                  Zur Kursübersicht
                   <ArrowRight className="size-5" aria-hidden="true" />
                 </Link>
               )}
@@ -185,7 +185,7 @@ export function LessonTheoryView({ level, lesson }: LessonTheoryViewProps) {
                 <div key={exercise.id} className="flex items-center gap-3 rounded-md bg-muted p-3">
                   <CheckCircle2 className="size-5 text-primary" aria-hidden="true" />
                   <div>
-                    <p className="text-sm font-black">Uebung {exercise.order}</p>
+                    <p className="text-sm font-black">Übung {exercise.order}</p>
                     <p className="text-xs font-bold text-muted-foreground">{exercise.xpReward} XP</p>
                   </div>
                 </div>

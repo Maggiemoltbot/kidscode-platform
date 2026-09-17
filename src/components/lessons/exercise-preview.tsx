@@ -76,7 +76,7 @@ function getExerciseTypeLabel(type: string) {
   }
 
   if (type === "CODE_GAP") {
-    return "Code-Luecke";
+    return "Code-Lücke";
   }
 
   return "Freier Code";
@@ -179,7 +179,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
 
     try {
       if (codeValue.includes("____")) {
-        setRuntimeError("Da ist noch eine Luecke offen.");
+        setRuntimeError("Da ist noch eine Lücke offen.");
         return;
       }
 
@@ -197,7 +197,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
         return;
       }
 
-      setTerminalOutput("Vorschau geprueft.");
+      setTerminalOutput("Vorschau geprüft.");
       await submitAnswer(codeValue.trim() || " ", null);
     } catch (caughtError) {
       const message = caughtError instanceof Error ? caughtError.message : "Pyodide konnte nicht gestartet werden.";
@@ -299,7 +299,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
           className="inline-flex items-center gap-2 text-sm font-black text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
-          Zurueck zur Theorie
+          Zurück zur Theorie
         </Link>
       </div>
 
@@ -325,7 +325,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
             <p className="text-sm font-black uppercase tracking-normal text-accent">
               {exercise.lesson.course.title} · {exercise.lesson.title}
             </p>
-            <h1 className="text-4xl font-black text-foreground">Uebung {exercise.order}</h1>
+            <h1 className="text-4xl font-black text-foreground">Übung {exercise.order}</h1>
             <p className="text-lg leading-8 text-muted-foreground">{exercise.question}</p>
           </div>
 
@@ -344,7 +344,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
             <div className="mt-8 rounded-lg bg-muted p-5">
               <p className="font-black">Lege zuerst ein Profil an.</p>
               <p className="mt-2 text-sm text-muted-foreground">
-                Dann koennen XP, Badges und Fortschritt gespeichert werden.
+                Dann können XP, Badges und Fortschritt gespeichert werden.
               </p>
               <Link href="/profile/new" className={cn(buttonVariants(), "mt-4 h-10 px-4")}>
                 Profil anlegen
@@ -405,7 +405,7 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
             />
           ) : (
             <div className="mt-8 rounded-lg bg-muted p-5">
-              <p className="font-black">Dieser Uebungstyp ist noch nicht verfuegbar.</p>
+              <p className="font-black">Dieser Übungstyp ist noch nicht verfügbar.</p>
             </div>
           )}
 
@@ -427,11 +427,11 @@ export function ExercisePreview({ level, exercise }: ExercisePreviewProps) {
               <p className="mt-2 text-sm font-bold">
                 {result.correct
                   ? result.alreadyCompleted
-                    ? "Diese Uebung war schon erledigt, deshalb gibt es keine doppelten XP."
+                    ? "Diese Übung war schon erledigt, deshalb gibt es keine doppelten XP."
                     : `Du bekommst ${result.xpEarned} XP.`
                   : isMultipleChoice
-                    ? "Der rote Knopf zeigt deine Auswahl. Die gruene Antwort hilft dir beim Lernen."
-                    : "Schau in die Ausgabe und pruefe, ob dein Code genau das erwartete Ergebnis zeigt."}
+                    ? "Der rote Knopf zeigt deine Auswahl. Die grüne Antwort hilft dir beim Lernen."
+                    : "Schau in die Ausgabe und prüfe, ob dein Code genau das erwartete Ergebnis zeigt."}
               </p>
               <Button className="mt-5 h-11 px-5 text-base" onClick={handleNext}>
                 {result.correct ? "Weiter" : "Nochmal probieren"}
@@ -487,7 +487,7 @@ function CodePracticePanel({
   onCodeChange,
   onRunCode,
 }: CodePracticePanelProps) {
-  const actionLabel = language === "python" ? "Ausfuehren" : "Pruefen";
+  const actionLabel = language === "python" ? "Ausführen" : "Prüfen";
 
   return (
     <div className="mt-8 grid gap-5">
@@ -500,7 +500,7 @@ function CodePracticePanel({
             <p className="text-sm font-black uppercase tracking-normal text-muted-foreground">
               {language === "python" ? "Python Editor" : "HTML Editor"}
             </p>
-            <p className="font-black">{exercise.type === "CODE_GAP" ? "Luecke fuellen" : "Eigener Code"}</p>
+            <p className="font-black">{exercise.type === "CODE_GAP" ? "Lücke füllen" : "Eigener Code"}</p>
           </div>
         </div>
         <Button className="h-11 px-5 text-base" disabled={isBusy || Boolean(result)} onClick={onRunCode}>
@@ -529,7 +529,7 @@ function CodePracticePanel({
       <div className="rounded-lg border border-neutral-800 bg-neutral-950 p-4 text-neutral-100 shadow-sm">
         <div className="mb-3 flex items-center gap-2 text-sm font-black text-neutral-300">
           <Terminal className="size-4" aria-hidden="true" />
-          {language === "python" ? "Terminal" : "Pruefung"}
+          {language === "python" ? "Terminal" : "Prüfung"}
         </div>
         <pre
           className={cn(

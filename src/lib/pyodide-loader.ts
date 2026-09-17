@@ -66,11 +66,11 @@ function getFriendlyPythonError(error: unknown) {
     .at(-1);
 
   if (/unterminated string|string literal|EOL while scanning/i.test(rawMessage)) {
-    return `Hmm, da fehlt noch ein Anfuehrungszeichen 🤔${lastLine ? `\n${lastLine}` : ""}`;
+    return `Hmm, da fehlt noch ein Anführungszeichen 🤔${lastLine ? `\n${lastLine}` : ""}`;
   }
 
   if (/SyntaxError/i.test(rawMessage)) {
-    return `Der Code ist fast richtig, aber Python stolpert noch ueber ein Zeichen.${lastLine ? `\n${lastLine}` : ""}`;
+    return `Der Code ist fast richtig, aber Python stolpert noch über ein Zeichen.${lastLine ? `\n${lastLine}` : ""}`;
   }
 
   if (/NameError/i.test(rawMessage)) {

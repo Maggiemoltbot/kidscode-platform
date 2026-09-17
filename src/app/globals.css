@@ -81,8 +81,8 @@
   --sidebar-accent-foreground: oklch(0.25 0.044 62);
   --sidebar-border: oklch(0.88 0.028 270);
   --sidebar-ring: oklch(0.62 0.2 294);
-  --font-kidscode-sans: "Nunito", "Poppins", "Arial Rounded MT Bold", ui-sans-serif, system-ui, sans-serif;
-  --font-kidscode-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-kidscode-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+  --font-kidscode-mono: "SF Mono", ui-monospace, Menlo, monospace;
 }
 
 .dark {
