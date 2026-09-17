@@ -2,6 +2,7 @@
 
 import { Text, useLanguage } from "@/components/i18n/language-provider";
 import { TTSPlayer } from "@/components/tts/tts-player";
+import { ConceptSection } from "@/components/lessons/concept-visual";
 import { SpeechSettings, useSpeechSettings } from "@/components/tts/speech-settings";
 
 import Link from "next/link";
@@ -127,6 +128,8 @@ export function LessonTheoryView({ level, lesson: source }: LessonTheoryViewProp
             <TTSPlayer text={lesson.theory} language={language} autoplay={speechSettings.autoplay} />
             <SpeechSettings language={language} settings={speechSettings} />
           </section>
+
+          <ConceptSection key={lesson.id} type={lesson.conceptType} />
 
           <section className="space-y-4 rounded-apple-xl bg-card p-6 shadow-sm">
             <div className="flex items-center gap-3">

@@ -52,6 +52,7 @@ model Lesson {
   title     String
   language  String
   theory    String
+  conceptType String?
   title_en  String?
   title_fr  String?
   theory_en String?

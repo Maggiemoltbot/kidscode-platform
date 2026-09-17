@@ -16,6 +16,7 @@ export type LessonDetailData = LocalizedFields & {
   title: string;
   language: string;
   theory: string;
+  conceptType: string | null;
   order: number;
   course: LocalizedFields & {
     id: string;
@@ -197,6 +198,7 @@ export async function getLessonByLevel(levelSlug: LevelSlug, lessonId: string): 
     title: lesson.title,
     language: lesson.language,
     theory: lesson.theory,
+    conceptType: lesson.conceptType,
     order: lesson.order,
     course: {
       ...translatedFields(lesson.course),

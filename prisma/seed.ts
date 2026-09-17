@@ -2,6 +2,7 @@ import { prisma } from "../src/lib/prisma";
 import { ExerciseType, Level, Prisma } from "@prisma/client";
 import { courseTranslations, lessonTranslations, exerciseTranslations } from "./translations";
 import { shuffleArray } from "../src/lib/shuffle";
+import { conceptTypeByLesson } from "../src/lib/concepts";
 
 type SeedExercise = {
   id: string;
@@ -847,6 +848,7 @@ async function main() {
         where: { id: lesson.id },
         update: {
           ...lessonTranslations[lesson.id],
+          conceptType: conceptTypeByLesson[lesson.id] ?? null,
           courseId: course.id,
           title: lesson.title,
           language: lesson.language,
@@ -855,6 +857,7 @@ async function main() {
         },
         create: {
           ...lessonTranslations[lesson.id],
+          conceptType: conceptTypeByLesson[lesson.id] ?? null,
           id: lesson.id,
           courseId: course.id,
           title: lesson.title,
